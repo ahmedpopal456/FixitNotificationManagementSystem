@@ -55,7 +55,7 @@ jobs:
       command: restore
       projects: '$(buildProjects)'
       feedsToUse: 'select'
-      vstsFeed: 'Empower'
+      vstsFeed: 'Fixit'
       includeNuGetOrg: true
       nobuild: true
 
