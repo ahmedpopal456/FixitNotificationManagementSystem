@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationWebApi", "NotificationWebApi\NotificationWebApi.csproj", "{1F60F212-815D-45C4-823A-498DBB953CD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationWebApi.UnitTest", "NotificationWebApi.UnitTest\NotificationWebApi.UnitTest.csproj", "{803D817E-A716-4729-8DA9-7C066F062A85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationWebApi.UnitTests", "NotificationWebApi.UnitTest\NotificationWebApi.UnitTests.csproj", "{803D817E-A716-4729-8DA9-7C066F062A85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
