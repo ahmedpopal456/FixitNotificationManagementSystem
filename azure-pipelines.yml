@@ -1,0 +1,103 @@
+trigger:
+  branches:
+    include:
+      - master
+      - development
+
+variables:
+
+  # Solution Variables
+  buildPlatform: 'x64'
+  buildProjects: '**/Notification*.csproj'
+  publishNotificationLibraries: '**\NotificationWebApi.csproj'
+
+  buildConfiguration: 'Release'
+
+  # Version Handling Variables
+  majorProductVersion: 1   
+  minorProductVersion: 0    
+  majorMinorProductVersion: $(majorProductVersion).$(minorProductVersion).0
+  patchProductVersion: $[counter(variables['majorMinorProductVersion'], 0)]
+  buildProductVersion: 0
+  buildFullVersion: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+ 
+  # Artifact Drop Folder
+  artifactName: 'drop'
+
+# Set Build Name
+name: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+
+jobs:
+
+- job: BuildingNotificationManagementSystem
+  
+  # Set Docker
+  pool:
+    vmImage: 'windows-2019'
+    displayName: Run Main Build and Test Pipeline
+
+  steps:
+
+    # Restore, Build and Package
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '3.1.102'
+      
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '$(buildProjects)'
+      feedsToUse: 'select'
+      vstsFeed: 'Empower'
+      includeNuGetOrg: true
+      nobuild: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '$(buildProjects)'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: Test
+    inputs:
+      command: 'test'
+      projects: '**/NotificationWebApi*Tests.csproj'
+      testRunTitle: 'NotificationWebApi Unit Tests'
+
+  - task: PublishTestResults@2
+    displayName: Publish Unit Tests
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'     
+        
+  - task: DotNetCoreCLI@2
+    displayName: Publish Notification Binaries
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: '$(publishNotificationLibraries)'
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore'
+      zipAfterPublish: false
+    
+    # Publish PDBs
+  - task: PublishSymbols@2
+    displayName: 'Publish symbols path'
+    inputs:
+      SearchPattern: '**\bin\**\*.pdb'
+      PublishSymbols: false
+    continueOnError: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: 'drop' 
