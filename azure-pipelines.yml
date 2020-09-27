@@ -54,8 +54,6 @@ jobs:
     inputs:
       command: restore
       projects: '$(buildProjects)'
-      feedsToUse: 'select'
-      vstsFeed: 'Fixit'
       includeNuGetOrg: true
       nobuild: true
 
