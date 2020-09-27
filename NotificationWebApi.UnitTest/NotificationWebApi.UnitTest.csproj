@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NotificationManagementSystem\NotificationWebApi\NotificationWebApi.csproj" />
+    <ProjectReference Include="..\NotificationWebApi\NotificationWebApi.csproj" />
   </ItemGroup>
 
 </Project>
