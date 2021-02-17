@@ -45,13 +45,13 @@ namespace Fixit.Notification.Management.Lib.Mappers
         .ForMember(installation => installation.InstallationId, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.InstallationId))
         .ForMember(installation => installation.Platform, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.Platform))
         .ForMember(installation => installation.PushChannel, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.PushChannelToken))
-        .ForMember(installation => installation.Tags, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto != null && deviceInstallationUpsertRequestDto.Tags != null ? deviceInstallationUpsertRequestDto.Tags.Select(item => $"{item.Key}:{item.Value}") : new List<string>()))
-        .ForMember(installation => installation.Templates, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => new Dictionary<string, Installation>()))
+        .ForMember(installation => installation.Tags, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto != null && deviceInstallationUpsertRequestDto.Tags != default ? deviceInstallationUpsertRequestDto.Tags.Select(item => $"{item.Key}:{item.Value}").ToList() : new List<string>()))
+        .ForMember(installation => installation.Templates, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => new Dictionary<string, InstallationTemplate>()))
         .ReverseMap();
 
       CreateMap<NotificationTemplateBaseDto, InstallationTemplate>()
-        .ForMember(installationTemplate => installationTemplate.Body, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto.Body))
-        .ForMember(installationTemplate => installationTemplate.Tags, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto != null && notificationTemplateBaseDto.Tags != null ? notificationTemplateBaseDto.Tags.Select(item => $"{item.Key}:{item.Value}") : new List<string>()))
+        .ForMember(installationTemplate => installationTemplate.Body, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto != null ? notificationTemplateBaseDto.Body : default))
+        .ForMember(installationTemplate => installationTemplate.Tags, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto != null && notificationTemplateBaseDto.Tags != default ? notificationTemplateBaseDto.Tags.Select(item => $"{item.Key}:{item.Value}").ToList() : new List<string>()))
         .ReverseMap();
 
       CreateMap<Installation, DeviceInstallationDto>()

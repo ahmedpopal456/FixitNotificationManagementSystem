@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Fixit.Notification.Management.Lib\Fixit.Notification.Management.Lib.csproj" />
+    <ProjectReference Include="..\Fixit.Notification.Management.ServerlessApi\Fixit.Notification.Management.ServerlessApi.csproj" />
   </ItemGroup>
 
 </Project>

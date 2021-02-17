@@ -22,16 +22,14 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     private readonly IMapper _mapper;
     private readonly IDatabaseTableEntityMediator _deviceInstallationContainer;
     private readonly INotificationHubClient _notificationHubClient;
-    private readonly ILogger<NotificationInstallationMediator> _logger;
     private readonly IExceptionDecorator<OperationStatus> _exceptionDecorator;
     private readonly string UserPrefix = "userId";
 
-    internal NotificationInstallationMediator(IDatabaseMediator databaseMediator,
-                                              IMapper mapper,
-                                              INotificationHubClient notificationHubClient,
-                                              IConfiguration configuration,
-                                              ILogger<NotificationInstallationMediator> logger,
-                                              IExceptionDecorator<OperationStatus> exceptionDecorator)
+    public NotificationInstallationMediator(IDatabaseMediator databaseMediator,
+                                            IMapper mapper,
+                                            INotificationHubClient notificationHubClient,
+                                            IConfiguration configuration,
+                                            IExceptionDecorator<OperationStatus> exceptionDecorator)
     {
       var cancellationToken = new CancellationTokenSource().Token;
 
@@ -55,20 +53,19 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
       _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
-      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
+      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
 
       var database = databaseMediator.GetDatabase(databaseName);
       _deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
     }
 
     internal NotificationInstallationMediator(IDatabaseMediator databaseMediator,
-                                              IMapper mapper,
-                                              INotificationHubClient notificationHubClient,
-                                              ILogger<NotificationInstallationMediator> logger,
-                                              IExceptionDecorator<OperationStatus> exceptionDecorator,
-                                              string databaseName,
-                                              string deviceInstallationsContainerName)
+                                            IMapper mapper,
+                                            INotificationHubClient notificationHubClient,
+                                            ILogger<NotificationInstallationMediator> logger,
+                                            IExceptionDecorator<OperationStatus> exceptionDecorator,
+                                            string databaseName,
+                                            string deviceInstallationsContainerName)
     {
       var cancellationToken = new CancellationTokenSource().Token;
 
@@ -90,7 +87,6 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
-      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
 
       var database = databaseMediator.GetDatabase(databaseName);
       _deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
@@ -102,19 +98,14 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (!deviceInstallationUpsertRequestDto.Validate())
-      {
-        throw new ArgumentNullException($"{nameof(UpsertInstallationAsync)} expects a valid value for {nameof(deviceInstallationUpsertRequestDto)}...");
-      }
-
-      var operationStatus = default(OperationStatus);
+      var operationStatus = new OperationStatus { IsOperationSuccessful = true};
       var updateInstallation = _mapper.Map<DeviceInstallationUpsertRequestDto, Installation>(deviceInstallationUpsertRequestDto);
 
-      // add the user's id as a tag 
-      updateInstallation.Tags?.Add($"{UserPrefix}:{deviceInstallationUpsertRequestDto.UserId}");
+			// add the user's id as a tag 
+			updateInstallation.Tags?.Add($"{UserPrefix}:{deviceInstallationUpsertRequestDto.UserId}");
 
       // add device templates
-      var deviceTemplates = deviceInstallationUpsertRequestDto.Templates?.Select(template => (template.Key, _mapper.Map<NotificationTemplateBaseDto, InstallationTemplate>(template.Value)));
+      updateInstallation.Templates = deviceInstallationUpsertRequestDto.Templates?.Select(template => new { template.Key, Value = _mapper.Map<NotificationTemplateBaseDto, InstallationTemplate>(template.Value) }).ToDictionary(pair => pair.Key, pair => pair.Value);
 
       // apply device installation
       operationStatus = await _exceptionDecorator.ExecuteOperationAsync(operationStatus, () => _notificationHubClient.CreateOrUpdateInstallationAsync(updateInstallation, cancellationToken));
@@ -142,11 +133,6 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     public async Task<DeviceInstallationDto> GetInstallationByIdAsync(string installationId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
-
-      if (string.IsNullOrWhiteSpace(installationId))
-      {
-        throw new ArgumentNullException($"{nameof(GetInstallationByIdAsync)} expects a valid value for {nameof(installationId)}...");
-      }
 
       DeviceInstallationDto deviceInstallationDto = default;
 
@@ -211,12 +197,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (string.IsNullOrWhiteSpace(installationId))
-      {
-        throw new ArgumentNullException($"{nameof(DeleteInstallationById)} expects a valid value for {nameof(installationId)}...");
-      }
-
-      var operationStatus = default(OperationStatus);
+      var operationStatus = new OperationStatus { IsOperationSuccessful = true };
 
       // get device installation 
       var deviceInstallation = await GetInstallationByIdAsync(installationId, cancellationToken);

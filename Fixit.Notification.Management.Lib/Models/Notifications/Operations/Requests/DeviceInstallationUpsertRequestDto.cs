@@ -30,11 +30,10 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
 
     public bool Validate()
     {
-      bool isValid = ((UserId != Guid.Empty) ||
-                     (Tags != null && Tags.Any())) &&
-                     (string.IsNullOrWhiteSpace(PushChannelToken)) &&
-                     (string.IsNullOrWhiteSpace(InstallationId)) &&
-                     (Enum.IsDefined(typeof(NotificationPlatform), Platform));
+      bool isValid = ((UserId != Guid.Empty) || (Tags != null && Tags.Any()))
+                     && !(string.IsNullOrWhiteSpace(PushChannelToken))
+                     && !(string.IsNullOrWhiteSpace(InstallationId))
+                     && (Enum.IsDefined(typeof(NotificationPlatform), Platform));
 
       return isValid;
     }
