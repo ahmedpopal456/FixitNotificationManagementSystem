@@ -8,6 +8,7 @@ using AutoMapper;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Decorators.Exceptions;
+using Fixit.Notification.Management.Lib.Models.Notifications;
 using Fixit.Notification.Management.Lib.Models.Notifications.Installations;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 using Fixit.Notification.Management.Lib.Models.Notifications.Templates;
@@ -60,12 +61,12 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     }
 
     internal NotificationInstallationMediator(IDatabaseMediator databaseMediator,
-                                            IMapper mapper,
-                                            INotificationHubClient notificationHubClient,
-                                            ILogger<NotificationInstallationMediator> logger,
-                                            IExceptionDecorator<OperationStatus> exceptionDecorator,
-                                            string databaseName,
-                                            string deviceInstallationsContainerName)
+                                              IMapper mapper,
+                                              INotificationHubClient notificationHubClient,
+                                              ILogger<NotificationInstallationMediator> logger,
+                                              IExceptionDecorator<OperationStatus> exceptionDecorator,
+                                              string databaseName,
+                                              string deviceInstallationsContainerName)
     {
       var cancellationToken = new CancellationTokenSource().Token;
 
@@ -153,17 +154,18 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       return deviceInstallationDto;
     }
 
-    public async Task<IEnumerable<DeviceInstallationDto>> GetInstallationsAsync(CancellationToken cancellationToken, NotificationPlatform? platformType = null, IEnumerable<KeyValuePair<string, string>> tags = null, IEnumerable<Guid> userIds = null)
+    public async Task<IEnumerable<DeviceInstallationDto>> GetInstallationsAsync(CancellationToken cancellationToken, NotificationPlatform? platformType = null, IEnumerable<NotificationTagDto> tags = null, IEnumerable<Guid> userIds = null)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
       var deviceInstallationDtos = new List<DeviceInstallationDto>();
 
       // define filters
-      Expression<Func<DeviceInstallationDocument, bool>> expression = deviceInstallation => (platformType == null || (deviceInstallation.Platform == platformType.Value)) &&
-                                                                                            (tags == null || tags.Any(tag => deviceInstallation.Tags.Contains(tag))) &&
-                                                                                            (userIds == null || userIds.Any(userId => deviceInstallation.EntityId == userId.ToString()));
-
+      var userIdsString = userIds.Select(userId => userId.ToString());
+      tags ??= new List<NotificationTagDto>();
+			Expression <Func<DeviceInstallationDocument, bool>> expression = deviceInstallation => (platformType == null || deviceInstallation.Platform.ToString() == platformType.ToString())
+                                                                                             && (userIds == null || userIdsString.Contains(deviceInstallation.EntityId))
+                                                                                             && (deviceInstallation.Tags.Select(devTag => tags.Contains(devTag)) != null);
 
       // get all installations based on previous filter
       var deviceInstallations = new List<DeviceInstallationDocument>();
@@ -171,12 +173,12 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       string continuationToken = "";
       while (continuationToken != null)
       {
-        var response = await _deviceInstallationContainer.GetItemQueryableAsync(string.IsNullOrWhiteSpace(continuationToken) ? null : continuationToken, cancellationToken, expression, null);
+        var (documentCollection, tempContinuationToken) = await _deviceInstallationContainer.GetItemQueryableAsync(null, cancellationToken, expression, null);
 
-        continuationToken = response.ContinuationToken;
-        if (response.DocumentCollection.IsOperationSuccessful)
+        continuationToken = tempContinuationToken;
+        if (documentCollection.IsOperationSuccessful)
         {
-          deviceInstallations.AddRange(response.DocumentCollection.Results);
+          deviceInstallations.AddRange(documentCollection.Results);
         }
       }
 

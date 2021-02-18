@@ -20,7 +20,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
     public string PushChannelToken { get; set; }
 
     [DataMember]
-    public IList<KeyValuePair<string, string>> Tags { get; set; }
+    public IList<NotificationTagDto> Tags { get; set; }
 
     [DataMember]
     public IDictionary<string, NotificationTemplateBaseDto> Templates { get; set; }

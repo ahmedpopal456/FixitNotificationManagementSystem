@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Notification.Management.Lib.Models.Notifications.Enums;
+using Fixit.Notification.Management.Lib.Models.Notifications.Payloads;
 
 namespace Fixit.Notification.Management.Lib.Models.Notifications
 {
@@ -9,13 +10,13 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications
   public class NotificationDto
   {
     [DataMember]
-    public object Payload { get; set; }
+    public PayloadBaseDto Payload { get; set; }
 
     [DataMember]
     public NotificationTypes Action { get; set; }
 
     [DataMember]
-    public IList<KeyValuePair<string, string>> Tags { get; set; }
+    public IList<NotificationTagDto> Tags { get; set; }
 
     [DataMember]
     public IEnumerable<UserSummaryDto> Recipients { get; set; }

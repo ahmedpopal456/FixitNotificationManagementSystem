@@ -19,7 +19,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Installations
     public bool PushChannelTokenExpired { get; set; }
 
     [DataMember]
-    public IList<KeyValuePair<string, string>> Tags { get; set; }
+    public IList<NotificationTagDto> Tags { get; set; }
 
     [DataMember]
     public IDictionary<string, NotificationTemplateBaseDto> Templates { get; set; }

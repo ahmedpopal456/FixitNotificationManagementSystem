@@ -17,7 +17,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
     public NotificationTypes Action { get; set; }
 
     [DataMember]
-    public IList<KeyValuePair<string, string>> Tags { get; set; }
+    public IList<NotificationTagDto> Tags { get; set; }
 
     [DataMember]
     public IEnumerable<UserSummaryDto> Recipients { get; set; }
@@ -30,9 +30,9 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
 
     public bool Validate()
     {
-      bool isValid = (Payload != null) ||
-                     ((Tags != null && Tags.Any()) || (Recipients != null && Recipients.Any())) &&
-                     (Enum.IsDefined(typeof(NotificationTypes), Action));
+      bool isValid = (Payload != null)
+                     || ((Tags != null && Tags.Any()) || (Recipients != null && Recipients.Any()))
+                     && (Enum.IsDefined(typeof(NotificationTypes), Action));
 
       return isValid;
     }

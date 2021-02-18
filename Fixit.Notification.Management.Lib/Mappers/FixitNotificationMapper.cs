@@ -45,13 +45,13 @@ namespace Fixit.Notification.Management.Lib.Mappers
         .ForMember(installation => installation.InstallationId, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.InstallationId))
         .ForMember(installation => installation.Platform, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.Platform))
         .ForMember(installation => installation.PushChannel, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.PushChannelToken))
-        .ForMember(installation => installation.Tags, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto != null && deviceInstallationUpsertRequestDto.Tags != default ? deviceInstallationUpsertRequestDto.Tags.Select(item => $"{item.Key}:{item.Value}").ToList() : new List<string>()))
+        .ForMember(installation => installation.Tags, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto != null && deviceInstallationUpsertRequestDto.Tags != default ? deviceInstallationUpsertRequestDto.Tags.Select(tag => $"{tag.Key}:{tag.Value}").ToList() : new List<string>()))
         .ForMember(installation => installation.Templates, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => new Dictionary<string, InstallationTemplate>()))
         .ReverseMap();
 
       CreateMap<NotificationTemplateBaseDto, InstallationTemplate>()
         .ForMember(installationTemplate => installationTemplate.Body, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto != null ? notificationTemplateBaseDto.Body : default))
-        .ForMember(installationTemplate => installationTemplate.Tags, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto != null && notificationTemplateBaseDto.Tags != default ? notificationTemplateBaseDto.Tags.Select(item => $"{item.Key}:{item.Value}").ToList() : new List<string>()))
+        .ForMember(installationTemplate => installationTemplate.Tags, opts => opts.MapFrom(notificationTemplateBaseDto => notificationTemplateBaseDto != null && notificationTemplateBaseDto.Tags != default ? notificationTemplateBaseDto.Tags.Select(tag => $"{tag.Key}:{tag.Value}").ToList() : new List<string>()))
         .ReverseMap();
 
       CreateMap<Installation, DeviceInstallationDto>()
@@ -59,7 +59,7 @@ namespace Fixit.Notification.Management.Lib.Mappers
         .ForMember(deviceInstallationDto => deviceInstallationDto.Platform, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.Platform))
         .ForMember(deviceInstallationDto => deviceInstallationDto.PushChannelToken, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.PushChannel))
         .ForMember(deviceInstallationDto => deviceInstallationDto.PushChannelTokenExpired, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.PushChannelExpired))
-        .ForMember(deviceInstallationDto => deviceInstallationDto.Tags, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto != null && deviceInstallationUpsertRequestDto.Tags != null ? deviceInstallationUpsertRequestDto.Tags.Select(tag => KeyValuePair.Create<string,string>(tag.Split(":", StringSplitOptions.None).FirstOrDefault(), tag.Split(":", StringSplitOptions.None).LastOrDefault())) : null))
+        .ForMember(deviceInstallationDto => deviceInstallationDto.Tags, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto != null && deviceInstallationUpsertRequestDto.Tags != null ? deviceInstallationUpsertRequestDto.Tags.Select(tag => new NotificationTagDto { Key=tag.Split(":", StringSplitOptions.None).FirstOrDefault(), Value=tag.Split(":", StringSplitOptions.None).LastOrDefault()}) : null))
         .ForMember(deviceInstallationDto => deviceInstallationDto.Templates, opts => opts.MapFrom(deviceInstallationUpsertRequestDto => deviceInstallationUpsertRequestDto.Templates))
         .ForMember(deviceInstallationDto => deviceInstallationDto.UserId, opts => opts.Ignore())
         .ReverseMap();

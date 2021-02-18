@@ -18,7 +18,7 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Installations
     private readonly IMapper _mapper;
 
     public DeleteInstallation(INotificationInstallationMediator notificationInstallationMediator,
-                              IMapper mapper) : base()
+                              IMapper mapper)
     {
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(UpsertInstallation)} expects a value for {nameof(mapper)}... null argument was provided");
       _notificationInstallationMediator = notificationInstallationMediator ?? throw new ArgumentNullException($"{nameof(UpsertInstallation)} expects a value for {nameof(notificationInstallationMediator)}... null argument was provided");

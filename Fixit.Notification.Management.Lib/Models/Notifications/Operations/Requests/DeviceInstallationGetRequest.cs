@@ -12,7 +12,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
     public NotificationPlatform? PlatformType { get; set; }
 
     [DataMember]
-    public IEnumerable<KeyValuePair<string, string>> Tags { get; set; }
+    public IList<NotificationTagDto> Tags { get; set; }
 
     [DataMember]
     public IEnumerable<Guid> UserIds { get; set; }

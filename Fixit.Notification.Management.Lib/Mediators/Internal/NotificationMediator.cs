@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -79,10 +80,14 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       var notificationDto = _mapper.Map<EnqueueNotificationRequestDto, NotificationDto>(enqueueNotificationRequestDto);
 
       // define enqueued time
-      notificationDto.CreatedTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); 
+      notificationDto.CreatedTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+      // serialize message
+      string notificationJson = JsonConvert.SerializeObject(notificationDto);
+      string base64EncodedNotification = Convert.ToBase64String(Encoding.UTF8.GetBytes(notificationJson));
 
       // enqueue notification
-      var operationStatus = await _notificationsQueue.SendMessageAsync(JsonConvert.SerializeObject(notificationDto), TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
+      var operationStatus = await _notificationsQueue.SendMessageAsync(base64EncodedNotification, TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
 
       return operationStatus;
     }
