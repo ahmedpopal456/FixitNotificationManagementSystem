@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fixit.Notification.Management.Lib.Mediators;
 using Fixit.Notification.Management.Lib.Models.Notifications;
+using Fixit.Notification.Management.Lib.Models.Notifications.Installations;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -29,15 +30,15 @@ namespace Fixit.Notification.Management.Triggers.Functions
     }
 
     [FunctionName("OnQueueNotifyUsers")]
-		public async Task RunAsync([QueueTrigger("notificationsqueue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, ILogger logger, CancellationToken cancellationToken)
+		public async Task RunAsync([QueueTrigger("notificationsqueue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, ILogger<OnQueueNotifyUsers> logger, CancellationToken cancellationToken)
 		{
       await NotifyUsers(queuedNotificationMessage, logger, cancellationToken);
     }
 
-    public async Task NotifyUsers(string queuedNotificationMessage, 
-                                  ILogger logger, 
-                                  CancellationToken cancellationToken)
+    public async Task<int> NotifyUsers(string queuedNotificationMessage, ILogger<OnQueueNotifyUsers> logger, CancellationToken cancellationToken)
     {
+      int taskComplete = 1;
+
       // validate queue message
       NotificationDto notificationMessage = JsonConvert.DeserializeObject<NotificationDto>(queuedNotificationMessage);
       if (notificationMessage == null)
@@ -60,7 +61,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
       byte[] byteArrayMessage = Convert.FromBase64String(base64EncodedMessage);
 
       NotificationOutcome notificationOutcome = null;
-      foreach (var deviceIntallation in deviceInstallations)
+      Parallel.ForEach(deviceInstallations, async deviceIntallation =>
       {
         switch (deviceIntallation.Platform)
         {
@@ -88,8 +89,10 @@ namespace Fixit.Notification.Management.Triggers.Functions
             || (notificationOutcome.State == NotificationOutcomeState.Unknown)))
         {
           logger.LogError($"Failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcoume {notificationOutcome?.State}...");
+          taskComplete = 0;
         }
-      }
+      });
+      return taskComplete;
     }
 	}
 }

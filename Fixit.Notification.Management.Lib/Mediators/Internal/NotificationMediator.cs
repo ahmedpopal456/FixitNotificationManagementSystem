@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
+[assembly: InternalsVisibleTo("Fixit.Notification.Management.Lib.UnitTests"),
+           InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Fixit.Notification.Management.Lib.Mediators.Internal
 {
   internal class NotificationMediator : INotificationMediator
