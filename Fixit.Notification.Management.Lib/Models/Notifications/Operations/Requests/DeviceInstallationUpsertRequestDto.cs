@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Fixit.Notification.Management.Lib.Models.Notifications.Templates;
+using Fixit.Notification.Management.Lib.Seeders;
 using Microsoft.Azure.NotificationHubs;
 
 namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests
 {
   [DataContract]
-  public class DeviceInstallationUpsertRequestDto : IDtoValidator
+  public class DeviceInstallationUpsertRequestDto : IDtoValidator, IFakeSeederAdapter<DeviceInstallationUpsertRequestDto>
   {
     [DataMember]
     public string InstallationId { get; set; }
@@ -28,7 +29,8 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
     [DataMember]
     public Guid UserId { get; set; }
 
-    public bool Validate()
+		#region IDtoValidator
+		public bool Validate()
     {
       bool isValid = ((UserId != Guid.Empty) || (Tags != null && Tags.Any()))
                      && !(string.IsNullOrWhiteSpace(PushChannelToken))
@@ -37,5 +39,19 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
 
       return isValid;
     }
-  }
+    #endregion
+
+    #region IFakeSeederAdapter
+    public IList<DeviceInstallationUpsertRequestDto> SeedFakeDtos()
+    {
+      return new List<DeviceInstallationUpsertRequestDto>
+      {
+        new DeviceInstallationUpsertRequestDto
+        {
+
+        }
+      };
+    }
+		#endregion
+	}
 }

@@ -2,12 +2,13 @@
 using System.Runtime.Serialization;
 using Fixit.Core.Database;
 using Fixit.Notification.Management.Lib.Models.Notifications.Templates;
+using Fixit.Notification.Management.Lib.Seeders;
 using Microsoft.Azure.NotificationHubs;
 
 namespace Fixit.Notification.Management.Lib.Models.Notifications.Installations
 {
   [DataContract]
-  public class DeviceInstallationDocument : DocumentBase
+  public class DeviceInstallationDocument : DocumentBase, IFakeSeederAdapter<DeviceInstallationDocument>
   {
     [DataMember]
     public NotificationPlatform Platform { get; set; }
@@ -29,5 +30,18 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Installations
 
     [DataMember]
     public long UpdatedTimestampUtc { get; set; }
-  }
+
+    #region IFakeSeederAdapter
+    public IList<DeviceInstallationDocument> SeedFakeDtos()
+		{
+      return new List<DeviceInstallationDocument>
+      {
+        new DeviceInstallationDocument
+				{
+          Platform = NotificationPlatform.Fcm
+        }
+      };
+		}
+		#endregion
+	}
 }

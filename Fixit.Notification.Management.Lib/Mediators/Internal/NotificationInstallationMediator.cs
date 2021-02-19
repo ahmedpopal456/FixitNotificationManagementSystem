@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -16,10 +17,13 @@ using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+[assembly: InternalsVisibleTo("Fixit.Notification.Management.Lib.UnitTests"),
+           InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Fixit.Notification.Management.Lib.Mediators.Internal
 {
 	internal class NotificationInstallationMediator : INotificationInstallationMediator
   {
+    private readonly ILogger<NotificationInstallationMediator> _logger;
     private readonly IMapper _mapper;
     private readonly IDatabaseTableEntityMediator _deviceInstallationContainer;
     private readonly INotificationHubClient _notificationHubClient;
@@ -30,6 +34,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
                                             IMapper mapper,
                                             INotificationHubClient notificationHubClient,
                                             IConfiguration configuration,
+                                            ILogger<NotificationInstallationMediator> logger,
                                             IExceptionDecorator<OperationStatus> exceptionDecorator)
     {
       var cancellationToken = new CancellationTokenSource().Token;
@@ -55,6 +60,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
 
       var database = databaseMediator.GetDatabase(databaseName);
       _deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
@@ -88,6 +94,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
 
       var database = databaseMediator.GetDatabase(databaseName);
       _deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
@@ -136,16 +143,28 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       cancellationToken.ThrowIfCancellationRequested();
 
       DeviceInstallationDto deviceInstallationDto = default;
+      Installation installation = default;
 
-      // get device installation dto 
-      var installation = await _notificationHubClient.GetInstallationAsync(installationId, cancellationToken);
-      if (installation != null)
+			// get device installation dto
+      try
+			{
+        installation = await _notificationHubClient.GetInstallationAsync(installationId, cancellationToken);
+			}
+      catch (Exception exception)
+			{
+        _logger.LogError($"{nameof(NotificationHubClient)} method GetInstallationAsync failed with exception {exception}");
+        // for now to force the  500 internal error from Azure Notification Hub
+        installation = _notificationHubClient.GetInstallation(installationId);
+      }
+
+      if (installation != default)
       {
         // map request to device installation document 
         deviceInstallationDto = _mapper.Map<Installation, DeviceInstallationDto>(installation);
-        
+
         // get user id from installation
-        var userIdString = installation.Tags?.FirstOrDefault(tag => tag.Split(":", StringSplitOptions.None).FirstOrDefault() == "userId");
+        var userIdTag = installation.Tags?.FirstOrDefault(tag => tag.Split(":", StringSplitOptions.None).FirstOrDefault() == "userId");
+        var userIdString = userIdTag?.Split(":", StringSplitOptions.None).LastOrDefault();
 
         Guid.TryParse(userIdString, out Guid userId);
         deviceInstallationDto.UserId = userId;
@@ -173,7 +192,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       string continuationToken = "";
       while (continuationToken != null)
       {
-        var (documentCollection, tempContinuationToken) = await _deviceInstallationContainer.GetItemQueryableAsync(null, cancellationToken, expression, null);
+        var (documentCollection, tempContinuationToken) = await _deviceInstallationContainer.GetItemQueryableAsync(continuationToken, cancellationToken, expression, null);
 
         continuationToken = tempContinuationToken;
         if (documentCollection.IsOperationSuccessful)
@@ -203,7 +222,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
       // get device installation 
       var deviceInstallation = await GetInstallationByIdAsync(installationId, cancellationToken);
-      if(deviceInstallation != null)
+      if (deviceInstallation != null)
       {
         // delete device installation
         operationStatus = await _exceptionDecorator.ExecuteOperationAsync(operationStatus, () => _notificationHubClient.DeleteInstallationAsync(installationId, cancellationToken));

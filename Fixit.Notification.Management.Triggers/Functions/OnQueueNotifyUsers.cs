@@ -34,7 +34,9 @@ namespace Fixit.Notification.Management.Triggers.Functions
       await NotifyUsers(queuedNotificationMessage, logger, cancellationToken);
     }
 
-    public async Task NotifyUsers(string queuedNotificationMessage, ILogger logger, CancellationToken cancellationToken)
+    public async Task NotifyUsers(string queuedNotificationMessage, 
+                                  ILogger logger, 
+                                  CancellationToken cancellationToken)
     {
       // validate queue message
       NotificationDto notificationMessage = JsonConvert.DeserializeObject<NotificationDto>(queuedNotificationMessage);
