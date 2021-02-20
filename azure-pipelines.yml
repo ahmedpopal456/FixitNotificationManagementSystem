@@ -141,7 +141,7 @@ jobs:
       command: 'test'
       testRunTitle: 'Fixit Notification Unit Tests'
       projects: '**/*.UnitTests.csproj'
-      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutputFormat=opencover /p:Exclude="[*]Fixit.Notification.Management.ServerlessApi*"'
+      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutputFormat=opencover /p:Exclude="[*]Aliencube.AzureFunctions.Extensions.OpenApi*%2c[*]Fixit.Notification.Management.Lib.Models*%2c[*]Fixit.Notification.Management.Lib.Extensions*%2c[*]Fixit.Notification.Management.ServerlessApi*" /p:ExcludeByFile=\"*/**/*Startup.cs%2c*/**/Fixit.Notification.Management.Lib/*AssemblyInfo.cs%2c\"'
       nobuild: true
 
   - script: |
