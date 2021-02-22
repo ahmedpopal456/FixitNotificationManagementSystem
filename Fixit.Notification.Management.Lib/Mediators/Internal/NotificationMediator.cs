@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,9 +11,10 @@ using Fixit.Notification.Management.Lib.Models.Notifications;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
+[assembly: InternalsVisibleTo("Fixit.Notification.Management.Lib.UnitTests"),
+           InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Fixit.Notification.Management.Lib.Mediators.Internal
 {
   internal class NotificationMediator : INotificationMediator
@@ -19,40 +22,37 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     private readonly IMapper _mapper;
     private readonly INotificationHubClient _notificationHubClient;
     private readonly IQueueClientMediator _notificationsQueue;
-    private readonly ILogger<NotificationInstallationMediator> _logger;
     private readonly IExceptionDecorator<OperationStatus> _exceptionDecorator;
 
-    internal NotificationMediator(IMapper mapper,
-                                  INotificationHubClient notificationHubClient,
-                                  IQueueServiceClientMediator queueServiceClientMediator,
-                                  IConfiguration configuration,
-                                  ILogger<NotificationInstallationMediator> logger,
-                                  IExceptionDecorator<OperationStatus> exceptionDecorator)
+    public NotificationMediator(IMapper mapper,
+                                INotificationHubClient notificationHubClient,
+                                IQueueServiceClientMediator queueServiceClientMediator,
+                                IConfiguration configuration,
+                                IExceptionDecorator<OperationStatus> exceptionDecorator)
     {
       var cancellationToken = new CancellationTokenSource().Token;
       var notificationQueueName = configuration["FIXIT-NMS-QUEUE-NAME"];
 
       if (queueServiceClientMediator == null)
       {
-        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(queueServiceClientMediator)}... null argument was provided");
+        throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(queueServiceClientMediator)}... null argument was provided");
       }
 
       if (string.IsNullOrWhiteSpace(notificationQueueName))
       {
-        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Notifications Queue Name as {{FIXIT-NMS-QUEUE-NAME}} ");
+        throw new ArgumentNullException($"{nameof(NotificationMediator)} expects the {nameof(configuration)} to have defined the Notifications Queue Name as {{FIXIT-NMS-QUEUE-NAME}} ");
       }
 
-      _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-      _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
-      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
+      _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
+      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _notificationsQueue = queueServiceClientMediator.GetQueueClient(notificationQueueName);
+
     }
 
     internal NotificationMediator(IMapper mapper,
                                   INotificationHubClient notificationHubClient,
                                   IQueueServiceClientMediator queueServiceClientMediator,
-                                  ILogger<NotificationInstallationMediator> logger,
                                   IExceptionDecorator<OperationStatus> exceptionDecorator,
                                   string notificationQueueName)
     {
@@ -60,19 +60,17 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
       if (queueServiceClientMediator == null)
       {
-        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(queueServiceClientMediator)}... null argument was provided");
+        throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(queueServiceClientMediator)}... null argument was provided");
       }
 
       if (string.IsNullOrWhiteSpace(notificationQueueName))
       {
-        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationQueueName)}... null argument was provided");
+        throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(notificationQueueName)}... null argument was provided");
       }
 
-      _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-      _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
-      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
-
+      _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
+      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
       _notificationsQueue = queueServiceClientMediator.GetQueueClient(notificationQueueName);
     }
 
@@ -82,18 +80,17 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (!enqueueNotificationRequestDto.Validate())
-      {
-        throw new ArgumentNullException($"{nameof(EnqueueNotificationAsync)} expects a valid value for {nameof(enqueueNotificationRequestDto)}...");
-      }
-
       var notificationDto = _mapper.Map<EnqueueNotificationRequestDto, NotificationDto>(enqueueNotificationRequestDto);
 
       // define enqueued time
-      notificationDto.CreatedTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); 
+      notificationDto.CreatedTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+      // serialize message
+      string notificationJson = JsonConvert.SerializeObject(notificationDto);
+      string base64EncodedNotification = Convert.ToBase64String(Encoding.UTF8.GetBytes(notificationJson));
 
       // enqueue notification
-      var operationStatus = await _notificationsQueue.SendMessageAsync(JsonConvert.SerializeObject(notificationDto), TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
+      var operationStatus = await _notificationsQueue.SendMessageAsync(base64EncodedNotification, TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
 
       return operationStatus;
     }

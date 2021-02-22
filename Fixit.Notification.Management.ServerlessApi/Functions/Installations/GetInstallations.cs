@@ -20,7 +20,7 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Installations
     private readonly IMapper _mapper;
 
     public GetInstallations(INotificationInstallationMediator notificationInstallationMediator,
-                            IMapper mapper) : base()
+                            IMapper mapper)
     {
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(GetInstallations)} expects a value for {nameof(mapper)}... null argument was provided");
       _notificationInstallationMediator = notificationInstallationMediator ?? throw new ArgumentNullException($"{nameof(GetInstallations)} expects a value for {nameof(notificationInstallationMediator)}... null argument was provided");
@@ -39,7 +39,7 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Installations
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (!FixitNotificationsDtoValidators.IsValidDeviceInstallationGetRequest(httpRequestMessage.Content, out DeviceInstallationGetRequest deviceInstallationGetRequest))
+      if (!FixitNotificationsDtoValidators.IsValidDeviceInstallationGetRequest(httpRequestMessage.Content, out DeviceInstallationGetRequestDto deviceInstallationGetRequest))
       {
         return new BadRequestObjectResult($"Either {nameof(deviceInstallationGetRequest)} is null or has one or more invalid fields...");
       }

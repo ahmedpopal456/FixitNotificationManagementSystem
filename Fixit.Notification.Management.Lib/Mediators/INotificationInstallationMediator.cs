@@ -6,6 +6,7 @@ using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests
 using Fixit.Notification.Management.Lib.Models.Notifications.Installations;
 using Fixit.Core.DataContracts;
 using Microsoft.Azure.NotificationHubs;
+using Fixit.Notification.Management.Lib.Models.Notifications;
 
 namespace Fixit.Notification.Management.Lib.Mediators
 {
@@ -35,7 +36,7 @@ namespace Fixit.Notification.Management.Lib.Mediators
     /// <param name="tags"></param>
     /// <param name="userIds"></param>
     /// <returns></returns>
-    public Task<IEnumerable<DeviceInstallationDto>> GetInstallationsAsync(CancellationToken cancellationToken, NotificationPlatform? platformType = null, IEnumerable<KeyValuePair<string, string>> tags = null, IEnumerable<Guid> userIds = null);
+    public Task<IEnumerable<DeviceInstallationDto>> GetInstallationsAsync(CancellationToken cancellationToken, NotificationPlatform? platformType = null, IEnumerable<NotificationTagDto> tags = null, IEnumerable<Guid> userIds = null);
 
     /// <summary>
     /// Delete an installation by installation id

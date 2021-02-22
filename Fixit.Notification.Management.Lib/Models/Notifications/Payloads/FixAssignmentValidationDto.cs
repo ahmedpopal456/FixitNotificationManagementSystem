@@ -15,11 +15,8 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Payloads
   // TODO: Move to FixManagementSystem
 
   [DataContract]
-  public class FixAssignmentValidationDto
+  public class FixAssignmentValidationDto : PayloadBaseDto
   {
-    [DataMember]
-    public Guid Id { get; set; }
-
     [DataMember]
     public UserSummaryDto AssignedToCraftsman { get; set; }
 
@@ -36,18 +33,18 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Payloads
     public IList<FixScheduleRangeDto> Schedule { get; set; }
 
     [DataMember]
-    public FixCategoryDto FixCategory { get; }
+    public FixCategoryDto FixCategory { get; set; }
 
     [DataMember]
-    public FixTypeDto FixType { get; }
+    public FixTypeDto FixType { get; set; }
 
     [DataMember]
-    public FixLocationDto Location { get; }
+    public FixLocationDto Location { get; set; }
 
     [DataMember]
-    public IEnumerable<FileDto> Images { get; }
+    public IEnumerable<FileDto> Images { get; set; }
 
     [DataMember]
-    public FixDetailsDto FixDetails { get; }
+    public FixDetailsDto FixDetails { get; set; }
   }
 }
