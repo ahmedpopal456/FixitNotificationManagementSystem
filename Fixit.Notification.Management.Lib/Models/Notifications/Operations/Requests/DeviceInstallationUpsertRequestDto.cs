@@ -48,7 +48,18 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
       {
         new DeviceInstallationUpsertRequestDto
         {
-
+          InstallationId = "3441a80b-cf00-41f5-80f1-b069f1d3cda6",
+          Platform = NotificationPlatform.Fcm,
+          PushChannelToken = "channel1",
+          Tags = new List<NotificationTagDto>
+					{
+            new NotificationTagDto
+						{
+              Key = "userId",
+              Value = "445e50d1-b2e7-4c25-a628-c610aed7a357"
+						}
+          },
+          UserId = Guid.Parse("445e50d1-b2e7-4c25-a628-c610aed7a357")
         }
       };
     }

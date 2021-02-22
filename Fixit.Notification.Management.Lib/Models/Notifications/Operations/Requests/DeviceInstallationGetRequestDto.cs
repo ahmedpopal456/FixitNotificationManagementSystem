@@ -6,7 +6,7 @@ using Microsoft.Azure.NotificationHubs;
 namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests
 {
   [DataContract]
-  public class DeviceInstallationGetRequest
+  public class DeviceInstallationGetRequestDto
   {
     [DataMember]
     public NotificationPlatform? PlatformType { get; set; }

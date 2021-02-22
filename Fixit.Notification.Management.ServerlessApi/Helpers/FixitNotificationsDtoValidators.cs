@@ -54,14 +54,14 @@ namespace Fixit.Notification.Management.ServerlessApi.Helpers
       return isValid;
     }
 
-    public static bool IsValidDeviceInstallationGetRequest(HttpContent httpContent, out DeviceInstallationGetRequest deviceInstallationGetRequest)
+    public static bool IsValidDeviceInstallationGetRequest(HttpContent httpContent, out DeviceInstallationGetRequestDto deviceInstallationGetRequest)
     {
       bool isValid = false;
       deviceInstallationGetRequest = null;
 
       try
       {
-        var deviceInstallationGetRequestDeserialized = JsonConvert.DeserializeObject<DeviceInstallationGetRequest>(httpContent.ReadAsStringAsync().Result);
+        var deviceInstallationGetRequestDeserialized = JsonConvert.DeserializeObject<DeviceInstallationGetRequestDto>(httpContent.ReadAsStringAsync().Result);
         if (deviceInstallationGetRequestDeserialized != null)
         {
           deviceInstallationGetRequest = deviceInstallationGetRequestDeserialized;

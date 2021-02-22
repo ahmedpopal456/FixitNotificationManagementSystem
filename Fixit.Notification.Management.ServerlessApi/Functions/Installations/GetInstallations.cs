@@ -39,7 +39,7 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Installations
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (!FixitNotificationsDtoValidators.IsValidDeviceInstallationGetRequest(httpRequestMessage.Content, out DeviceInstallationGetRequest deviceInstallationGetRequest))
+      if (!FixitNotificationsDtoValidators.IsValidDeviceInstallationGetRequest(httpRequestMessage.Content, out DeviceInstallationGetRequestDto deviceInstallationGetRequest))
       {
         return new BadRequestObjectResult($"Either {nameof(deviceInstallationGetRequest)} is null or has one or more invalid fields...");
       }
