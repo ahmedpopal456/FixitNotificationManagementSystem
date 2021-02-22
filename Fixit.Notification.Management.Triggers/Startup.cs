@@ -31,6 +31,7 @@ namespace Fixit.Notification.Management.Triggers
       StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-NMS-STORAGEACCOUNT-CS"]);
       DatabaseFactory databaseFactory = new DatabaseFactory(_configuration["FIXIT-NMS-DB-EP"], _configuration["FIXIT-NMS-DB-KEY"]);
 
+      builder.Services.AddLogging();
       builder.AddFixitNotificationServices();
       builder.Services.AddSingleton<IDatabaseMediator>(databaseFactory.CreateCosmosClient());
       builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());

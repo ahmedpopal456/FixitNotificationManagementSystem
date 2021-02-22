@@ -19,23 +19,25 @@ namespace Fixit.Notification.Management.Triggers.Functions
 	{
     private readonly INotificationInstallationMediator _notificationInstallationMediator;
     private readonly INotificationHubClient _notificationHubClient;
+    private readonly ILogger _logger;
 
     public OnQueueNotifyUsers(IConfiguration configurationProvider,
+                              ILoggerFactory loggerFactory,
                               INotificationInstallationMediator notificationInstallationMediator,
                               INotificationHubClient notificationHubClient)
 		{
-
+      _logger = loggerFactory.CreateLogger<OnQueueNotifyUsers>();
       _notificationInstallationMediator = notificationInstallationMediator ?? throw new ArgumentNullException($"{nameof(OnQueueNotifyUsers)} expects a value for {nameof(notificationInstallationMediator)}... null argument was provided");
       _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(OnQueueNotifyUsers)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
     }
 
     [FunctionName("OnQueueNotifyUsers")]
-		public async Task RunAsync([QueueTrigger("notificationsqueue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, ILogger<OnQueueNotifyUsers> logger, CancellationToken cancellationToken)
+		public async Task RunAsync([QueueTrigger("notificationsqueue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, CancellationToken cancellationToken)
 		{
-      await NotifyUsers(queuedNotificationMessage, logger, cancellationToken);
+      await NotifyUsers(queuedNotificationMessage, cancellationToken);
     }
 
-    public async Task<int> NotifyUsers(string queuedNotificationMessage, ILogger<OnQueueNotifyUsers> logger, CancellationToken cancellationToken)
+    public async Task<int> NotifyUsers(string queuedNotificationMessage, CancellationToken cancellationToken)
     {
       int taskComplete = 1;
 
@@ -88,7 +90,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
             && ((notificationOutcome.State == NotificationOutcomeState.Abandoned)
             || (notificationOutcome.State == NotificationOutcomeState.Unknown)))
         {
-          logger.LogError($"Failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcoume {notificationOutcome?.State}...");
+          _logger.LogError($"Failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcoume {notificationOutcome?.State}...");
           taskComplete = 0;
         }
       });
