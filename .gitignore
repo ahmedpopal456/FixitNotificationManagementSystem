@@ -327,6 +327,8 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+/Report
+*.xml
 
 # Azure Stream Analytics local run output
 ASALocalRun/
@@ -345,4 +347,3 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-*.xml

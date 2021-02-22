@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Fixit.Core.Database;
+using Fixit.Core.DataContracts.Seeders;
 using Fixit.Notification.Management.Lib.Models.Notifications.Templates;
-using Fixit.Notification.Management.Lib.Seeders;
 using Microsoft.Azure.NotificationHubs;
 
 namespace Fixit.Notification.Management.Lib.Models.Notifications.Installations

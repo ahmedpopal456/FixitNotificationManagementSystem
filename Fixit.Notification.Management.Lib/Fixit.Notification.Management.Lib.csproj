@@ -8,7 +8,7 @@
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Fixit.Core.Database" Version="1.0.57" />
     <PackageReference Include="Fixit.Core.Database.DataContracts" Version="1.0.57" />
-    <PackageReference Include="Fixit.Core.Storage" Version="1.0.22-beta" />
+    <PackageReference Include="Fixit.Core.Storage" Version="1.0.3-alpha" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
   </ItemGroup>

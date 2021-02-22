@@ -1,4 +1,5 @@
 using AutoMapper;
+using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Mappers;
 using Fixit.Notification.Management.Lib.Seeders;

@@ -2,6 +2,7 @@ using AutoMapper;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Decorators.Exceptions;
+using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Mappers;
 using Fixit.Notification.Management.Lib.Seeders;
@@ -15,7 +16,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests
 	[TestClass]
 	public class TestBase
 	{
-		public Seeders.IFakeSeederFactory _fakeDtoSeederFactory;
+		public IFakeSeederFactory _fakeDtoSeederFactory;
 
 		// Mocks
 		protected Mock<IConfiguration> _fakeConfiguration;

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Notification.Management.Lib.Models.Notifications.Enums;
 using Fixit.Notification.Management.Lib.Models.Notifications.Payloads;
-using Fixit.Notification.Management.Lib.Seeders;
 
 namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests
 {

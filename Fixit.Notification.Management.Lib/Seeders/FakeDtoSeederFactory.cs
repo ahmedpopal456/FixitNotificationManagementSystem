@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Fixit.Core.DataContracts.Seeders;
 using System.Collections.Generic;
-using System.Text;
-using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 
 namespace Fixit.Notification.Management.Lib.Seeders
 {
