@@ -20,14 +20,14 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 	[TestClass]
 	public class OnQueueTriggersTests : TestBase
 	{
-		private ILogger<OnQueueNotifyUsers> _fakeLogger;
+		private ILoggerFactory _fakeLoggerFactory;
 
 		[TestInitialize]
 		public void TestInitialize()
 		{
 			_fakeConfiguration = new Mock<IConfiguration>();
 			_fakeNotificationHubClient = new Mock<INotificationHubClient>();
-			_fakeLogger = new Mock<ILogger<OnQueueNotifyUsers>>().Object;
+			_fakeLoggerFactory = new Mock<ILoggerFactory>().Object;
 		}
 
 		#region OnQueueNotifyUsers
@@ -46,6 +46,7 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 			var notificationDto = _fakeDtoSeederFactory.CreateSeederFactory(new NotificationDto()).First();
 			var notificationJson = JsonConvert.SerializeObject(notificationDto);
 			var onQueueNotifyUsers = new OnQueueNotifyUsers(_fakeConfiguration.Object,
+																											_fakeLoggerFactory,
 																											_fakeNotificationInstallationMediator.Object,
 																											_fakeNotificationHubClient.Object);
 
@@ -62,7 +63,7 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 																.Returns(Task.FromResult(notificationOutcome));
 
 			// Act
-			var actionResult = await onQueueNotifyUsers.NotifyUsers(notificationJson, _fakeLogger, cancellationToken);
+			var actionResult = await onQueueNotifyUsers.NotifyUsers(notificationJson, cancellationToken);
 
 			// Assert
 			Assert.IsNotNull(actionResult);

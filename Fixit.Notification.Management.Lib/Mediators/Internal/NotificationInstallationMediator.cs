@@ -143,7 +143,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       cancellationToken.ThrowIfCancellationRequested();
 
       DeviceInstallationDto deviceInstallationDto = default;
-      Installation installation = default;
+      Installation installation;
 
 			// get device installation dto
       try
