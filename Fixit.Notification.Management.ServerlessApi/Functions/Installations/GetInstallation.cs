@@ -12,44 +12,41 @@ using Fixit.Notification.Management.Lib.Mediators;
 
 namespace Fixit.Notification.Management.ServerlessApi.Functions.Installations
 {
-  public class GetInstallation
-  {    
-    private readonly INotificationInstallationMediator _notificationInstallationMediator;
-    private readonly IMapper _mapper;
+	public class GetInstallation
+	{
+		private readonly INotificationInstallationMediator _notificationInstallationMediator;
 
-    public GetInstallation(INotificationInstallationMediator notificationInstallationMediator,
-                           IMapper mapper)
-    {
-      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(GetInstallation)} expects a value for {nameof(mapper)}... null argument was provided");
-      _notificationInstallationMediator = notificationInstallationMediator ?? throw new ArgumentNullException($"{nameof(GetInstallation)} expects a value for {nameof(notificationInstallationMediator)}... null argument was provided");
-    }
+		public GetInstallation(INotificationInstallationMediator notificationInstallationMediator)
+		{
+			_notificationInstallationMediator = notificationInstallationMediator ?? throw new ArgumentNullException($"{nameof(GetInstallation)} expects a value for {nameof(notificationInstallationMediator)}... null argument was provided");
+		}
 
-    [FunctionName(nameof(GetInstallation))]
-    [OpenApiOperation("get", "Notifications")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous,"get", Route = "Notifications/Installations/{id}")]
-                                         HttpRequestMessage httpRequest,
-                                         CancellationToken cancellationToken,
-                                         string id)
-    {
-      return await GetInstallationAsync(id, cancellationToken);
-    }
+		[FunctionName(nameof(GetInstallation))]
+		[OpenApiOperation("get", "Notifications")]
+		public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous,"get", Route = "Notifications/Installations/{id}")]
+																				 HttpRequestMessage httpRequest,
+																				 CancellationToken cancellationToken,
+																				 string id)
+		{
+			return await GetInstallationAsync(id, cancellationToken);
+		}
 
-    public async Task<IActionResult> GetInstallationAsync(string installationId, CancellationToken cancellationToken)
-    {
-      cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IActionResult> GetInstallationAsync(string installationId, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-      if (string.IsNullOrWhiteSpace(installationId))
-      {
-        return new BadRequestObjectResult($"{nameof(installationId)} is not a valid {nameof(String)}..");
-      }
+			if (string.IsNullOrWhiteSpace(installationId))
+			{
+				return new BadRequestObjectResult($"{nameof(installationId)} is not a valid {nameof(String)}..");
+			}
 
-      var result = await _notificationInstallationMediator.GetInstallationByIdAsync(installationId, cancellationToken);
-      if (result == null)
-      {
-        return new NotFoundObjectResult($"A device installation with id {installationId} was not found");
-      }
+			var result = await _notificationInstallationMediator.GetInstallationByIdAsync(installationId, cancellationToken);
+			if (result == null)
+			{
+				return new NotFoundObjectResult($"A device installation with id {installationId} was not found");
+			}
 
-      return new OkObjectResult(result); 
-    }
-  }
+			return new OkObjectResult(result);
+		}
+	}
 }

@@ -30,9 +30,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 		public void TestInitialize()
 		{
 			_fakeConfiguration = new Mock<IConfiguration>();
-			_fakeNotificationHubClient = new Mock<INotificationHubClient>();
 			_fakeQueueServiceClientMediator = new Mock<IQueueServiceClientMediator>();
-			_fakeOperationStatusExceptionDecorator = new Mock<IExceptionDecorator<OperationStatus>>();
 			_fakeQueueClientMediator = new Mock<IQueueClientMediator>();
 
 			_fakeConfiguration.Setup(configuration => configuration["FIXIT-NMS-QUEUE-NAME"])
@@ -42,10 +40,8 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 																		 .Returns(_fakeQueueClientMediator.Object);
 
 			_notificationMediator = new NotificationMediator(_mapperConfiguration.CreateMapper(),
-																											 _fakeNotificationHubClient.Object,
 																											 _fakeQueueServiceClientMediator.Object,
-																											 _fakeConfiguration.Object,
-																											 _fakeOperationStatusExceptionDecorator.Object);
+																											 _fakeConfiguration.Object);
 		}
 
 		[TestMethod]

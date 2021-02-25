@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Fixit.Core.Database.DataContracts.Documents;
@@ -54,7 +53,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			_fakeDatabaseTableMediator.Setup(database => database.GetContainer(_userDatabaseContainerName))
 																.Returns(_fakeDatabaseTableEntityMediator.Object);
 
-			_notificationInstallationMediator = new NotificationInstallationMediator(_fakeDatabaseMediator.Object, 
+			_notificationInstallationMediator = new NotificationInstallationMediator(_fakeDatabaseMediator.Object,
 																																							 _mapperConfiguration.CreateMapper(),
 																																							 _fakeNotificationHubClient.Object,
 																																							 _fakeConfiguration.Object,
@@ -96,8 +95,8 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			// Arrange
 			var cancellationToken = CancellationToken.None;
 			var deviceInstallationUpsertRequestDto = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationUpsertRequestDto()).First();
-			var initialOperationStatus = new OperationStatus 
-			{ 
+			var initialOperationStatus = new OperationStatus
+			{
 				IsOperationSuccessful = false,
 				OperationMessage = HttpStatusCode.BadRequest.ToString(),
 				OperationException = new Exception()
@@ -130,7 +129,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			var deviceId = "device-123";
 			var userId = "445e50d1-b2e7-4c25-a628-c610aed7a357";
 			var deviceInstallation = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationDto());
-			var installation = new Installation { InstallationId = deviceId, Tags = new List<string> { $"userId:{userId}" } };
+			var installation = new Installation { InstallationId = deviceId, Tags = new List<string> { $"UserPrefix:{userId}" } };
 
 			_fakeNotificationHubClient.Setup(notificationHubClient => notificationHubClient.GetInstallationAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
 																.Returns(Task.FromResult(installation));
@@ -193,7 +192,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			var userIdList = new List<Guid> { Guid.Parse("445e50d1-b2e7-4c25-a628-c610aed7a357") };
 			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationDocument());
 			var documentCollectionDto = new DocumentCollectionDto<DeviceInstallationDocument>
-			{ 
+			{
 				Results = deviceInstallationDocuments,
 				IsOperationSuccessful = true
 			};
