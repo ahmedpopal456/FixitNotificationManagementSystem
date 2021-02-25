@@ -15,35 +15,35 @@ using Microsoft.Extensions.DependencyInjection;
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fixit.Notification.Management.ServerlessApi
 {
-  public class Startup : FunctionsStartup
-  {
-    private IConfiguration _configuration;
+	public class Startup : FunctionsStartup
+	{
+		private IConfiguration _configuration;
 
-    public override void Configure(IFunctionsHostBuilder builder)
-    {
-      _configuration = (IConfiguration)builder.Services.BuildServiceProvider()
-                                                       .GetService(typeof(IConfiguration));
+		public override void Configure(IFunctionsHostBuilder builder)
+		{
+			_configuration = (IConfiguration)builder.Services.BuildServiceProvider()
+																											 .GetService(typeof(IConfiguration));
 
-      var mapperConfig = new MapperConfiguration(mc =>
-      {
-        mc.AddProfile(new FixitNotificationMapper());
-      });
+			var mapperConfig = new MapperConfiguration(mc =>
+			{
+				mc.AddProfile(new FixitNotificationMapper());
+			});
 
-      StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-NMS-STORAGEACCOUNT-CS"]);
-      DatabaseFactory databaseFactory = new DatabaseFactory(_configuration["FIXIT-NMS-DB-EP"], _configuration["FIXIT-NMS-DB-KEY"]);
+			StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-NMS-STORAGEACCOUNT-CS"]);
+			DatabaseFactory databaseFactory = new DatabaseFactory(_configuration["FIXIT-NMS-DB-EP"], _configuration["FIXIT-NMS-DB-KEY"]);
 
-      builder.AddFixitNotificationServices();
-      builder.Services.AddSingleton<IDatabaseMediator>(databaseFactory.CreateCosmosClient());
-      builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());
-      builder.Services.AddSingleton<IQueueServiceClientMediator>(storageFactory.CreateQueueServiceClientMediator());
-      builder.Services.AddSingleton<INotificationHubClient>(serviceProvider =>
-      {
-        var notificationHubName = _configuration["FIXIT-NMS-ANH-NAME"];
-        var notificationHubConnectionString = _configuration["FIXIT-NMS-ANH-CS"];
+			builder.AddFixitNotificationServices();
+			builder.Services.AddSingleton<IDatabaseMediator>(databaseFactory.CreateCosmosClient());
+			builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());
+			builder.Services.AddSingleton<IQueueServiceClientMediator>(storageFactory.CreateQueueServiceClientMediator());
+			builder.Services.AddSingleton<INotificationHubClient>(serviceProvider =>
+			{
+				var notificationHubName = _configuration["FIXIT-NMS-ANH-NAME"];
+				var notificationHubConnectionString = _configuration["FIXIT-NMS-ANH-CS"];
 
-        return NotificationHubClient.CreateClientFromConnectionString(notificationHubConnectionString, notificationHubName);
-      });
+				return NotificationHubClient.CreateClientFromConnectionString(notificationHubConnectionString, notificationHubName);
+			});
 
-    }
-  }
+		}
+	}
 }

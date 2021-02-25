@@ -9,12 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Fixit.Notification.Management.Lib.Extensions
 {
 	public static class FixitNotificationSystemExtension
-  {
-    public static void AddFixitNotificationServices(this IFunctionsHostBuilder builder)
-    {
-      builder.Services.AddSingleton<IExceptionDecorator<OperationStatus>, OperationStatusExceptionDecorator>();
-      builder.Services.AddSingleton<INotificationMediator, NotificationMediator>();
-      builder.Services.AddTransient<INotificationInstallationMediator, NotificationInstallationMediator>();
-    }
-  }
+	{
+		public static void AddFixitNotificationServices(this IFunctionsHostBuilder builder)
+		{
+			builder.Services.AddSingleton<IExceptionDecorator<OperationStatus>, OperationStatusExceptionDecorator>();
+			builder.Services.AddSingleton<INotificationMediator, NotificationMediator>();
+			builder.Services.AddTransient<INotificationInstallationMediator, NotificationInstallationMediator>();
+		}
+	}
 }
