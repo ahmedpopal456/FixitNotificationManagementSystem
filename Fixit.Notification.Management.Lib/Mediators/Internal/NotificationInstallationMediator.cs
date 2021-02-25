@@ -159,7 +159,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 				deviceInstallationDto = _mapper.Map<Installation, DeviceInstallationDto>(installation);
 
 				// get user id from installation
-				var userIdTag = installation.Tags?.FirstOrDefault(tag => tag.Split(":", StringSplitOptions.None).FirstOrDefault() == "UserPrefix");
+				var userIdTag = installation.Tags?.FirstOrDefault(tag => tag.Split(":", StringSplitOptions.None).FirstOrDefault() == UserPrefix);
 				var userIdString = userIdTag?.Split(":", StringSplitOptions.None).LastOrDefault();
 
 				Guid.TryParse(userIdString, out Guid userId);

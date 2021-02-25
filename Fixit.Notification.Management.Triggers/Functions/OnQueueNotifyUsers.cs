@@ -58,11 +58,6 @@ namespace Fixit.Notification.Management.Triggers.Functions
 			// get device installations
 			var deviceInstallations = await _notificationInstallationMediator.GetInstallationsAsync(cancellationToken, userIds: recipientIds);
 
-      // serialize notification message
-      string notificationJson = JsonConvert.SerializeObject(notificationMessage);
-      string base64EncodedMessage = Convert.ToBase64String(Encoding.UTF8.GetBytes(notificationJson));
-      byte[] byteArrayMessage = Convert.FromBase64String(base64EncodedMessage);
-
 			NotificationOutcome notificationOutcome = null;
 			Parallel.ForEach(deviceInstallations, async deviceIntallation =>
 			{
@@ -90,7 +85,6 @@ namespace Fixit.Notification.Management.Triggers.Functions
 						&& ((notificationOutcome.State == NotificationOutcomeState.Abandoned)
 						|| (notificationOutcome.State == NotificationOutcomeState.Unknown)))
 				{
-          _logger.LogError($"Failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcoume {notificationOutcome?.State}...");
 					taskComplete = 0;
 					var errorMessage = $"Failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcoume {notificationOutcome?.State}...";
 					_logger.LogError(errorMessage);

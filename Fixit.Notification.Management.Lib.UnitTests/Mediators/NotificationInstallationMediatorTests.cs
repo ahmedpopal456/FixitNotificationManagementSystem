@@ -28,6 +28,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 		private INotificationInstallationMediator _notificationInstallationMediator;
 		private ILogger<NotificationInstallationMediator> _fakeLogger;
 
+		private readonly string UserPrefix = "userId";
 		private readonly string _userDatabaseName = "TestDatabaseName";
 		private readonly string _userDatabaseContainerName = "TestDeviceInstallationsContainerName";
 
@@ -130,7 +131,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			var deviceId = "device-123";
 			var userId = "445e50d1-b2e7-4c25-a628-c610aed7a357";
 			var deviceInstallation = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationDto());
-			var installation = new Installation { InstallationId = deviceId, Tags = new List<string> { $"UserPrefix:{userId}" } };
+			var installation = new Installation { InstallationId = deviceId, Tags = new List<string> { $"{UserPrefix}:{userId}" } };
 
 			_fakeNotificationHubClient.Setup(notificationHubClient => notificationHubClient.GetInstallationAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
 																.Returns(Task.FromResult(installation));
