@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Azure Functions
+Properties/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -12,6 +15,7 @@
 
 # Project-specific files
 **/appsettings.[Ll]ocal.json
+**/local.settings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -323,6 +327,8 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+/Report
+*.xml
 
 # Azure Stream Analytics local run output
 ASALocalRun/
