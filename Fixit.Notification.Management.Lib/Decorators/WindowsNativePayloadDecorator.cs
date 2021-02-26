@@ -13,7 +13,8 @@ namespace Fixit.Notification.Management.Lib.Decorators
 
 		public new string GetBase64StringConversion()
 		{
-			return @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + base.GetByteArrayConversion() + "</text></binding></visual></toast>";
+			var message = base.GetBase64StringConversion();
+			return @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + message + "</text></binding></visual></toast>";
 		}
 	}
 }
