@@ -40,6 +40,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 
 		public async Task<int> NotifyUsers(string queuedNotificationMessage, CancellationToken cancellationToken)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			int taskComplete = 1;
 
 			// validate queue message
@@ -86,7 +87,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 						|| (notificationOutcome.State == NotificationOutcomeState.Unknown)))
 				{
 					taskComplete = 0;
-					var errorMessage = $"Failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcoume {notificationOutcome?.State}...";
+					var errorMessage = $"{nameof(OnQueueNotifyUsers)} failed to notify user id {deviceIntallation.UserId} with device id {deviceIntallation.InstallationId} and notification outcome {notificationOutcome?.State}...";
 					_logger.LogError(errorMessage);
 					throw new ArgumentNullException(errorMessage);
 				}

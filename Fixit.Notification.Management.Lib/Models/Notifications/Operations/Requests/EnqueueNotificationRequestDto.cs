@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Fixit.Core.DataContracts.Fixes.Notifications.Payloads;
 using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
+using Fixit.Core.DataContracts.Users.Enums;
 using Fixit.Notification.Management.Lib.Models.Notifications.Enums;
 
 namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests
@@ -52,7 +53,22 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
 					{
 						Id = Guid.Parse("3441a80b-cf00-41f5-80f1-b069f1d3cda6")
 					},
-					Action = NotificationTypes.FixClientRequest
+					Action = NotificationTypes.FixClientRequest,
+					Recipients = new List<UserSummaryDto>
+					{
+						new UserSummaryDto
+						{
+							Id = Guid.Parse("3441a80b-cf00-41f5-80f1-b069f1d3cda6"),
+							FirstName = "Jon",
+							LastName = "Doe",
+							ProfilePictureUrl = "",
+							Role = UserRole.Client,
+							Status = new UserStatusDto
+							{
+								Status = UserStatus.Online
+							}
+						}
+					}
 				}
 			};
 		}
