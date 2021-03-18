@@ -33,7 +33,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 		}
 
 		[FunctionName("OnQueueNotifyUsers")]
-		public async Task RunAsync([QueueTrigger("notificationsqueue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, CancellationToken cancellationToken)
+		public async Task RunAsync([QueueTrigger("%FIXIT-NMS-QUEUE-NAME%", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, CancellationToken cancellationToken)
 		{
 			await NotifyUsers(queuedNotificationMessage, cancellationToken);
 		}

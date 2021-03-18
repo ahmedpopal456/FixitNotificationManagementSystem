@@ -106,7 +106,8 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 			var updateInstallation = _mapper.Map<DeviceInstallationUpsertRequestDto, Installation>(deviceInstallationUpsertRequestDto);
 
 			// add the user's id as a tag 
-			updateInstallation.Tags?.Add($"{UserPrefix}:{deviceInstallationUpsertRequestDto.UserId}");
+			updateInstallation.Tags ??= new List<string>();
+			updateInstallation.Tags.Add($"{UserPrefix}:{deviceInstallationUpsertRequestDto.UserId}");
 
 			// add device templates
 			updateInstallation.Templates = deviceInstallationUpsertRequestDto.Templates?.Select(template => new { template.Key, Value = _mapper.Map<NotificationTemplateBaseDto, InstallationTemplate>(template.Value) }).ToDictionary(pair => pair.Key, pair => pair.Value);

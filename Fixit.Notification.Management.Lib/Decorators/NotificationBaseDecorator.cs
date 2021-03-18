@@ -21,13 +21,5 @@ namespace Fixit.Notification.Management.Lib.Decorators
 
 			return base64EncodedMessage;
 		}
-
-		public byte[] GetByteArrayConversion()
-		{
-			string base64EncodedMessage = GetBase64StringConversion();
-			byte[] byteArrayMessage = Convert.FromBase64String(base64EncodedMessage);
-
-			return byteArrayMessage;
-		}
 	}
 }

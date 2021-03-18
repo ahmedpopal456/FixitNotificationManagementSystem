@@ -1,7 +1,8 @@
-﻿using Fixit.Notification.Management.Lib.Models.Notifications;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
+using Fixit.Notification.Management.Lib.Models.Notifications;
 
 namespace Fixit.Notification.Management.Lib.Decorators
 {
@@ -13,7 +14,18 @@ namespace Fixit.Notification.Management.Lib.Decorators
 
 		public new string GetBase64StringConversion()
 		{
-			return "{ \"data\" : {\"message\":\"" + base.GetByteArrayConversion() + "\"}}";
+			var title = ToSentenceCase(notificationDto.Action.ToString());
+			var notification = "\"notification\" : {\"title\":\"" + title + "\", \"body\":\"\"}";
+
+			var message = base.GetBase64StringConversion();
+			var data = "\"data\" : {\"message\":\"" + message + "\"}";
+
+			return "{" + notification + "," + data + "}";
+		}
+
+		private string ToSentenceCase(string pascalCaseString)
+		{
+			return Regex.Replace(pascalCaseString, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
 		}
 	}
 }
