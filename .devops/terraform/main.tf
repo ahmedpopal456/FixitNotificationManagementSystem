@@ -38,6 +38,10 @@ resource "azurerm_notification_hub" "main" {
   namespace_name      = azurerm_notification_hub_namespace.main.name
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
+
+  gcm_credential {
+    api_key = data.azurerm_key_vault_secret.gcm_key.value
+  }
 }
 
 resource "azurerm_notification_hub_authorization_rule" "main" {
@@ -91,7 +95,7 @@ resource "azurerm_function_app" "main" {
 
     "FIXIT-NMS-QUEUE-NAME"        = azurerm_storage_queue.main.name,
     "FIXIT-NMS-STORAGEACCOUNT-CS" = azurerm_storage_account.main.primary_connection_string,
-    "FIXIT-NMS-ANH-CS"            = azurerm_notification_hub_authorization_rule.main.primary_access_key,
+    "FIXIT-NMS-ANH-CS"            = "Endpoint=sb://${azurerm_notification_hub_namespace.main.name}.servicebus.windows.net/;SharedAccessKeyName=${azurerm_notification_hub_authorization_rule.main.name};SharedAccessKey=${azurerm_notification_hub_authorization_rule.main.primary_access_key}",
     "FIXIT-NMS-ANH-NAME"          = azurerm_notification_hub.main.name
   }
 }
