@@ -33,7 +33,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 		}
 
 		[FunctionName("OnQueueNotifyUsers")]
-		public async Task RunAsync([QueueTrigger("notificationsqueue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, CancellationToken cancellationToken)
+		public async Task RunAsync([QueueTrigger("fixit-dev-nms-queue", Connection = "FIXIT-NMS-STORAGEACCOUNT-CS")] string queuedNotificationMessage, CancellationToken cancellationToken)
 		{
 			await NotifyUsers(queuedNotificationMessage, cancellationToken);
 		}
@@ -50,10 +50,11 @@ namespace Fixit.Notification.Management.Triggers.Functions
 			}
 
 			// convert tags
-			IEnumerable<string> tags = notificationMessage.Tags.Select(item => $"{item.Key}:{item.Value}").ToList();
+			IList<string> tags = notificationMessage.Tags.Select(item => $"{item.Key}:{item.Value}").ToList();
 
 			// get userIds (recipientIds)
 			IEnumerable<Guid> recipientIds = notificationMessage.Recipients.Select(userSummaryDto => userSummaryDto.Id).ToList();
+			tags.Add($"userId:{recipientIds.First()}");
 
 			// get device installations
 			var deviceInstallations = await _notificationInstallationMediator.GetInstallationsAsync(cancellationToken, userIds: recipientIds);
