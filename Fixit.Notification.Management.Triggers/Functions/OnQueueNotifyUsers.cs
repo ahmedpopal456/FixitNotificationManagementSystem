@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Fixit.Notification.Management.Lib.Decorators;
 using Fixit.Notification.Management.Lib.Mediators;
 using Fixit.Notification.Management.Lib.Models.Notifications;
-using Fixit.Notification.Management.Lib.Models.Notifications.Installations;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +20,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 		private readonly INotificationInstallationMediator _notificationInstallationMediator;
 		private readonly INotificationHubClient _notificationHubClient;
 		private readonly ILogger _logger;
+		private readonly string UserPrefix = "userId";
 
 		public OnQueueNotifyUsers(IConfiguration configurationProvider,
 															ILoggerFactory loggerFactory,
@@ -50,34 +50,45 @@ namespace Fixit.Notification.Management.Triggers.Functions
 				throw new InvalidOperationException($"{nameof(OnQueueNotifyUsers)} was unable to properly deserialize {nameof(queuedNotificationMessage)}...");
 			}
 
-			// convert tags
-			IEnumerable<string> tags = notificationMessage.Tags.Select(item => $"{item.Key}:{item.Value}").ToList();
+			// convert tags from notification payload
+			IEnumerable<string> notifPayloadTags = notificationMessage.Tags.Select(item => $"{item.Key}:{item.Value}").ToList();
 
 			// get userIds (recipientIds)
 			IEnumerable<Guid> recipientIds = notificationMessage.Recipients.Select(userSummaryDto => userSummaryDto.Id).ToList();
 
 			// get device installations
 			var deviceInstallations = await _notificationInstallationMediator.GetInstallationsAsync(cancellationToken, userIds: recipientIds);
+			deviceInstallations = deviceInstallations.GroupBy(deviceInstallation => deviceInstallation.UserId).Select(groupedDI => groupedDI.First());
 
 			NotificationOutcome notificationOutcome = null;
 			Parallel.ForEach(deviceInstallations, async deviceIntallation =>
 			{
+				// combine all tags and keep distinct values
+				var currentTags = new List<string>();
+				currentTags.AddRange(notifPayloadTags);
+				currentTags.AddRange(deviceIntallation.Tags.Select(tag => $"{tag.Key}:{tag.Value}"));
+				currentTags.Add($"{UserPrefix}:{deviceIntallation.UserId}");
+				currentTags = currentTags.Distinct().ToList();
+
+				// _logger.LogInformation($"{nameof(OnQueueNotifyUsers)}: {deviceIntallation.InstallationId} has tags {currentTags}");
+
+				// send through the appropriate service
 				switch (deviceIntallation.Platform)
 				{
 					case NotificationPlatform.Wns:
 						// Windows 8.1 / Windows Phone 8.1
 						var toast = new WindowsNativePayloadDecorator(notificationMessage).GetBase64StringConversion();
-						notificationOutcome = await _notificationHubClient.SendWindowsNativeNotificationAsync(toast, tags, cancellationToken);
+						notificationOutcome = await _notificationHubClient.SendWindowsNativeNotificationAsync(toast, currentTags, cancellationToken);
 						break;
 					case NotificationPlatform.Apns:
 						// iOS
 						var alert = new ApplePayloadDecorator(notificationMessage).GetBase64StringConversion();
-						notificationOutcome = await _notificationHubClient.SendAppleNativeNotificationAsync(alert, tags, cancellationToken);
+						notificationOutcome = await _notificationHubClient.SendAppleNativeNotificationAsync(alert, currentTags, cancellationToken);
 						break;
 					case NotificationPlatform.Fcm:
 						// Android
 						var notif = new FirebasePayloadDecorator(notificationMessage).GetBase64StringConversion();
-						notificationOutcome = await _notificationHubClient.SendFcmNativeNotificationAsync(notif, tags, cancellationToken);
+						notificationOutcome = await _notificationHubClient.SendFcmNativeNotificationAsync(notif, currentTags, cancellationToken);
 						break;
 				}
 
