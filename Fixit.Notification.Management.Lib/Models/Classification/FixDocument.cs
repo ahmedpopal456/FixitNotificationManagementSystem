@@ -12,7 +12,7 @@ using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.FixPlans;
 using Fixit.Core.DataContracts.Users;
 
-namespace Fixit.Notification.Management.Triggers.Models
+namespace Fixit.Notification.Management.Lib.Models
 {
 	/// <summary>
 	/// TODO: Move to DataContracts or Move to FMS.Lib

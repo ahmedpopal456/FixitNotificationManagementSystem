@@ -6,9 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fixit.Core.DataContracts;
 using Fixit.Notification.Management.Lib.Mediators;
+using Fixit.Notification.Management.Lib.Mediators.Internal;
+using Fixit.Notification.Management.Lib.Models;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
+using Fixit.Notification.Management.Lib.Networking.Local;
 using Fixit.Notification.Management.Triggers.Functions;
-using Fixit.Notification.Management.Triggers.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -21,10 +23,14 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 	public class OnFixCreateMatchAndNotifyFixTests : TestBase
 	{
 		private OnFixCreateMatchAndNotifyFix _onFixCreateMatchAndNotifyFix;
+		private FixClassificationMediator _fixAndCraftsmenMatchMediator;
 		private Mock<ILoggerFactory> _fakeLoggerFactory;
 		private Mock<ILogger<OnFixCreateMatchAndNotifyFix>> _fakeLogger;
 		private CancellationToken _cancellationToken;
 		private Mock<INotificationMediator> _fakeNotificationMediator;
+
+		private Mock<IFixClassificationMediator> _fakeFixClassificationMediator;
+		private Mock<IFixItHttpClient> _fakeHttpClient;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -33,12 +39,15 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 			_fakeLoggerFactory = new Mock<ILoggerFactory>();
 			_fakeLogger = new Mock<ILogger<OnFixCreateMatchAndNotifyFix>>();
 			_fakeNotificationMediator = new Mock<INotificationMediator>();
+			_fakeFixClassificationMediator = new Mock<IFixClassificationMediator>();
+			_fakeHttpClient = new Mock<IFixItHttpClient>();
 
 			_fakeLoggerFactory.Setup(fakeLoggerFactory => fakeLoggerFactory.CreateLogger(It.IsAny<string>()))
 												.Returns(_fakeLogger.Object);
 
 			_cancellationToken = CancellationToken.None;
-			_onFixCreateMatchAndNotifyFix = new OnFixCreateMatchAndNotifyFix(_fakeConfiguration.Object, _fakeLoggerFactory.Object, _fakeNotificationMediator.Object);
+			_onFixCreateMatchAndNotifyFix = new OnFixCreateMatchAndNotifyFix(_fakeConfiguration.Object, _fakeLoggerFactory.Object, _fakeNotificationMediator.Object, _fakeFixClassificationMediator.Object);
+			_fixAndCraftsmenMatchMediator = new FixClassificationMediator(_mapperConfiguration.CreateMapper(), _fakeHttpClient.Object);
 		}
 
 		#region OnFixCreateMatchAndNotifyFix
@@ -71,6 +80,22 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 			// Act and Assert
 			await Assert.ThrowsExceptionAsync<AggregateException>(async () => await _onFixCreateMatchAndNotifyFix.MatchAndNotifyFix(rawFixDocuments, _cancellationToken));
 		}
+		#endregion
+
+		#region Classification Algorithm
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException), 
+			"Value cannot be null. (Parameter 'FixClassificationBuilder expects the craftsmenList to have a list user craftsmen')")]
+		public async Task GetQualitifedCraftmen_NoCraftsmenListThrowException()
+		{
+			// Arrange
+			var cancellationToken = CancellationToken.None;
+			var fixDocument = new FixDocument();
+
+			// Act
+			var actionResult = await _fixAndCraftsmenMatchMediator.GetMinimalQualitifedCraftmen(fixDocument, cancellationToken);
+		}
+
 		#endregion
 	}
 }

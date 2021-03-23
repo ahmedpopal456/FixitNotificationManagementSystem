@@ -26,8 +26,8 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Notifications
 		[FunctionName(nameof(EnqueueNotification))]
 		[OpenApiOperation("post", "Notifications")]
 		public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous,"post", Route = "Notifications")]
-																				 HttpRequestMessage httpRequest,
-																				 CancellationToken cancellationToken)
+											HttpRequestMessage httpRequest,
+											CancellationToken cancellationToken)
 		{
 			return await EnqueueNotificationAsync(httpRequest, cancellationToken);
 		}

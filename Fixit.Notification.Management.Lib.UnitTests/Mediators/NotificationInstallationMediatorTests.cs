@@ -79,7 +79,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(It.IsAny<OperationStatus>(), It.IsAny<Func<Task>>()))
 																						.Returns(Task.FromResult(initialOperationStatus));
 
-			_fakeDatabaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<DeviceInstallationDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+			_fakeDatabaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<DeviceInstallationDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 																			.Returns(Task.FromResult(updatedOperationStatus));
 
 			// Act
@@ -192,7 +192,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			// Arrange
 			var cancellationToken = CancellationToken.None;
 			var userIdList = new List<Guid> { Guid.Parse("445e50d1-b2e7-4c25-a628-c610aed7a357") };
-			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationDocument());
+			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory<DeviceInstallationDocument>(new DeviceInstallationDocument());
 			var documentCollectionDto = new DocumentCollectionDto<DeviceInstallationDocument>
 			{
 				Results = deviceInstallationDocuments,
@@ -216,7 +216,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			// Arrange
 			var cancellationToken = CancellationToken.None;
 			var userIdList = new List<Guid> { Guid.Parse("445e50d1-b2e7-4c25-a628-c610aed7a357") };
-			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationDocument());
+			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory<DeviceInstallationDocument>(new DeviceInstallationDocument());
 			var documentCollectionDto = new DocumentCollectionDto<DeviceInstallationDocument>
 			{
 				Results = new List<DeviceInstallationDocument>(),
@@ -240,7 +240,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			// Arrange
 			var cancellationToken = CancellationToken.None;
 			var userIdList = new List<Guid> { Guid.Parse("445e50d1-b2e7-4c25-a628-c610aed7a357") };
-			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory(new DeviceInstallationDocument());
+			var deviceInstallationDocuments = _fakeDtoSeederFactory.CreateSeederFactory<DeviceInstallationDocument>(new DeviceInstallationDocument());
 			var documentCollectionDto = new DocumentCollectionDto<DeviceInstallationDocument>
 			{
 				Results = new List<DeviceInstallationDocument>(),

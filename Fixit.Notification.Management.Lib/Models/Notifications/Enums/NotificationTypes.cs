@@ -6,7 +6,8 @@
     FixCraftsmanResponse,
     FixPlanUpdate,
     FixProgressUpdate,
-    MessageEntry,
+    NewMessage,
+    NewConversation,
     RatingUpdate
   }
 }

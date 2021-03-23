@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixit.Notification.Manageme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixit.Notification.Management.Lib.UnitTests", "Fixit.Notification.Management.Lib.UnitTests\Fixit.Notification.Management.Lib.UnitTests.csproj", "{9E0EE835-18F2-47A3-83CD-1B7F0C7D43F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixit.Notification.Management.Triggers.UnitTests", "Fixit.Notification.Management.Triggers.UnitTests\Fixit.Notification.Management.Triggers.UnitTests.csproj", "{C3F2CF26-15E3-4A53-8F05-11C615CD2932}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixit.Notification.Management.Triggers.UnitTests", "Fixit.Notification.Management.Triggers.UnitTests\Fixit.Notification.Management.Triggers.UnitTests.csproj", "{C3F2CF26-15E3-4A53-8F05-11C615CD2932}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

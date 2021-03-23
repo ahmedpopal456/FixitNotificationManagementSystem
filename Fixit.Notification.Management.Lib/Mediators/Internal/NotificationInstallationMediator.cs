@@ -125,7 +125,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 				installationDocument.UpdatedTimestampUtc = currentTimestampUtc;
 
 				// update installation record
-				operationStatus = await _deviceInstallationContainer.UpdateItemAsync<DeviceInstallationDocument>(installationDocument, installationDocument.EntityId, cancellationToken);
+				operationStatus = await _deviceInstallationContainer.UpsertItemAsync<DeviceInstallationDocument>(installationDocument, installationDocument.EntityId, cancellationToken);
 			}
 
 			return operationStatus;

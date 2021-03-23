@@ -6,10 +6,14 @@ using Fixit.Core.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Extensions;
 using Fixit.Notification.Management.Lib.Mappers;
 using Fixit.Notification.Management.Triggers;
+using Fixit.Notification.Management.Lib.Mediators;
+using Fixit.Notification.Management.Lib.Mediators.Internal;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Fixit.Notification.Management.Lib.Networking.Extensions;
+using Fixit.Notification.Management.Lib.Networking.Local;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fixit.Notification.Management.Triggers
@@ -21,11 +25,12 @@ namespace Fixit.Notification.Management.Triggers
 		public override void Configure(IFunctionsHostBuilder builder)
 		{
 			_configuration = (IConfiguration)builder.Services.BuildServiceProvider()
-																											 .GetService(typeof(IConfiguration));
+													.GetService(typeof(IConfiguration));
 
 			var mapperConfig = new MapperConfiguration(mc =>
 			{
 				mc.AddProfile(new FixitNotificationMapper());
+				mc.AddProfile(new FixClassificationMapper());
 			});
 
 			StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-NMS-STORAGEACCOUNT-CS"]);
@@ -42,6 +47,15 @@ namespace Fixit.Notification.Management.Triggers
 				var notificationHubConnectionString = _configuration["FIXIT-NMS-ANH-CS"];
 
 				return NotificationHubClient.CreateClientFromConnectionString(notificationHubConnectionString, notificationHubName);
+			});
+
+			builder.Services.AddUmServices("https://fixit-dev-ums-api.azurewebsites.net/");
+			builder.Services.AddSingleton<IFixClassificationMediator, FixClassificationMediator>(serviceProvider =>
+			{
+				var mapper = serviceProvider.GetService<IMapper>();
+				var httpClient = serviceProvider.GetService<IFixItHttpClient>();
+
+				return new FixClassificationMediator(mapper, httpClient);
 			});
 
 		}

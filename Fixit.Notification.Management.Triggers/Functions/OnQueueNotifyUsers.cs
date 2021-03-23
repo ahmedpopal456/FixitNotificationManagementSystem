@@ -23,9 +23,9 @@ namespace Fixit.Notification.Management.Triggers.Functions
 		private readonly string UserPrefix = "userId";
 
 		public OnQueueNotifyUsers(IConfiguration configurationProvider,
-															ILoggerFactory loggerFactory,
-															INotificationInstallationMediator notificationInstallationMediator,
-															INotificationHubClient notificationHubClient)
+								ILoggerFactory loggerFactory,
+								INotificationInstallationMediator notificationInstallationMediator,
+								INotificationHubClient notificationHubClient)
 		{
 			_logger = loggerFactory.CreateLogger<OnQueueNotifyUsers>();
 			_notificationInstallationMediator = notificationInstallationMediator ?? throw new ArgumentNullException($"{nameof(OnQueueNotifyUsers)} expects a value for {nameof(notificationInstallationMediator)}... null argument was provided");
