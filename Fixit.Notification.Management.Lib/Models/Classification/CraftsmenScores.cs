@@ -16,6 +16,8 @@ namespace Fixit.Notification.Management.Lib.Models
 
         public float RatingScore { get; set; }
 
+        public float TotalScore { get; set; }
+
         public CraftsmenScores(UserDocument userDocument)
         {
             UserDocument = userDocument;
@@ -23,6 +25,7 @@ namespace Fixit.Notification.Management.Lib.Models
             AvailibilityScore = 0;
             ProximityScore = 0;
             RatingScore = 0;
+            TotalScore = 0;
         }
 
     }

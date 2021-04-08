@@ -12,8 +12,9 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Fixit.Notification.Management.Lib.Networking.Extensions;
-using Fixit.Notification.Management.Lib.Networking.Local;
+using Fixit.Core.Networking.Extensions;
+using Fixit.Core.Networking.Local.UMS;
+using Fixit.Core.Networking.Local.MDM;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fixit.Notification.Management.Triggers
@@ -49,13 +50,16 @@ namespace Fixit.Notification.Management.Triggers
 				return NotificationHubClient.CreateClientFromConnectionString(notificationHubConnectionString, notificationHubName);
 			});
 
-			builder.Services.AddUmServices("https://fixit-dev-ums-api.azurewebsites.net/");
+			builder.Services.AddUmServices(_configuration["FIXIT-UMS-SERVICE-EP"]);
+			builder.Services.AddMdmServices(_configuration["FIXIT-MDM-SERVICE-EP"]);
 			builder.Services.AddSingleton<IFixClassificationMediator, FixClassificationMediator>(serviceProvider =>
 			{
 				var mapper = serviceProvider.GetService<IMapper>();
-				var httpClient = serviceProvider.GetService<IFixItHttpClient>();
+				var httpUmClient = serviceProvider.GetService<IFixUmsHttpClient>();
+				var httpMdmClient = serviceProvider.GetService<IFixMdmHttpClient>();
+				var configuration = serviceProvider.GetService<IConfiguration>();
 
-				return new FixClassificationMediator(mapper, httpClient);
+				return new FixClassificationMediator(mapper, httpUmClient, httpMdmClient, configuration);
 			});
 
 		}

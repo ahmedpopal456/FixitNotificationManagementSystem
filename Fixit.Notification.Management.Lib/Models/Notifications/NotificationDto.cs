@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Fixit.Core.DataContracts.Fixes.Notifications.Payloads;
+using Fixit.Core.DataContracts.Notifications.Payloads;
 using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Notification.Management.Lib.Models.Notifications.Enums;

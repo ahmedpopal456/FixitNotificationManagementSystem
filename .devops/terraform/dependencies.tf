@@ -17,3 +17,8 @@ data "azurerm_key_vault_secret" "gcm_key" {
   name         = "GoogleAPIKey"
   key_vault_id = data.azurerm_key_vault.main.id
 }
+
+data "azurerm_key_vault_secret" "google_maps_api_key" {
+  name         = "GoogleMapsAPIKey"
+  key_vault_id = data.azurerm_key_vault.main.id
+}
