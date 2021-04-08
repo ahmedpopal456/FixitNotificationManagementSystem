@@ -6,12 +6,13 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.FcmPa
 	[DataContract]
 	public static class DefaultFcmSilentNotificationCreateExtension
 	{
-		public static FcmSilentNotification CreateDefaultNotification(this FcmSilentNotification fcmSilentNotification, object message, string action)
+		public static FcmSilentNotification CreateDefaultNotification(this FcmSilentNotification fcmSilentNotification, string message, string action, object fixitData)
 		{
 			fcmSilentNotification.Data = new FcmSilentData()
 			{
 				Action = action,
-				Message = message
+				Message = message,
+				FixitData = fixitData
 			};
 
 			return fcmSilentNotification;

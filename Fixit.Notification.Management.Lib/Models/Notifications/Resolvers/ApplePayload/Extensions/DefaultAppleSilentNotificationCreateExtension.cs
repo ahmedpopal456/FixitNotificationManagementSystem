@@ -7,7 +7,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.Apple
 	[DataContract]
 	public static class DefaultAppleSilentNotificationCreateExtension
 	{
-		public static AppleSilentNotification CreateDefaultNotification(this AppleSilentNotification appleSilentNotification, object message, string action)
+		public static AppleSilentNotification CreateDefaultNotification(this AppleSilentNotification appleSilentNotification, string message, string action, object fixitPayload)
 		{
 			appleSilentNotification.Action = action;
 			appleSilentNotification.Message = message;
@@ -19,6 +19,8 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.Apple
 				Sound = "",
 				ContentAvailable = 1
 			};
+
+			appleSilentNotification.FixitData = fixitPayload;
 
 			return appleSilentNotification;
 		}

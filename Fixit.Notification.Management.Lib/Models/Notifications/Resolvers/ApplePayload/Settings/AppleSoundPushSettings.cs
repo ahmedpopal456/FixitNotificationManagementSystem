@@ -5,6 +5,6 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.Apple
 	public class AppleSoundPushSettings
 	{
 		[JsonProperty(PropertyName = "alert")]
-		public object Alert { get; set; }
+		public string Alert { get; set; }
 	}
 }

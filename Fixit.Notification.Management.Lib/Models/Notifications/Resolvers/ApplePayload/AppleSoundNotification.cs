@@ -12,5 +12,8 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.Apple
 
 		[DataMember, JsonProperty(PropertyName = "action")]
 		public string Action { get; set; }
+
+		[DataMember, JsonProperty(PropertyName = "fixitdata")]
+		public object FixitData { get; set; }
 	}
 }

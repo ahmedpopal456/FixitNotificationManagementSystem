@@ -8,9 +8,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers
 	{
 		public static string Serialize(NotificationQueueRequestDto notificationQueueRequestDto, NotificationPlatform notificationPlatform)
 		{
-			var payload = JsonConvert.SerializeObject(notificationQueueRequestDto.Payload);
-
-			return NotificationPayloadResolver.Resolve(notificationQueueRequestDto.Payload, notificationQueueRequestDto.Silent, notificationQueueRequestDto.Action, notificationPlatform);
+			return NotificationPayloadResolver.Resolve(notificationQueueRequestDto.Payload, notificationQueueRequestDto.Message, notificationQueueRequestDto.Silent, notificationQueueRequestDto.Action, notificationPlatform);
 		}
 	}
 }

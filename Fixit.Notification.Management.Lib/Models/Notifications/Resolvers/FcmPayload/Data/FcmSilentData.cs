@@ -7,10 +7,13 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.FcmPa
 	public class FcmSilentData
 	{
 		[DataMember, JsonProperty(PropertyName = "message")]
-		public object Message { get; set; }
+		public string Message { get; set; }
 
 
 		[DataMember, JsonProperty(PropertyName = "action")]
 		public string Action { get; set; }
+
+		[DataMember, JsonProperty(PropertyName = "fixitdata")]
+		public object FixitData { get; set; }
 	}
 }

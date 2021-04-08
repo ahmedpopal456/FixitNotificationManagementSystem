@@ -10,18 +10,18 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers
 {
 	public static class NotificationPayloadResolver
 	{
-		public static string Resolve(object notificationPayload, bool isSilent, NotificationTypes notificationType, NotificationPlatform notificationPlatform)
+		public static string Resolve(object notificationPayload, string message, bool isSilent, NotificationTypes notificationType, NotificationPlatform notificationPlatform)
 		{
 			switch (notificationPlatform, isSilent)
 			{
 				case (NotificationPlatform.Apns, true):
-					return JsonConvert.SerializeObject(new AppleSilentNotification().CreateDefaultNotification(notificationPayload, notificationType.ToString()));
+					return JsonConvert.SerializeObject(new AppleSilentNotification().CreateDefaultNotification(message, notificationType.ToString(), notificationPayload));
 				case (NotificationPlatform.Apns, false):
-					return JsonConvert.SerializeObject(new AppleSoundNotification().CreateDefaultNotification(notificationPayload, notificationType.ToString()));
+					return JsonConvert.SerializeObject(new AppleSoundNotification().CreateDefaultNotification(message, notificationType.ToString(), notificationPayload));
 				case (NotificationPlatform.Fcm, true):
-					return JsonConvert.SerializeObject(new FcmSilentNotification().CreateDefaultNotification(notificationPayload, notificationType.ToString()));
+					return JsonConvert.SerializeObject(new FcmSilentNotification().CreateDefaultNotification(message, notificationType.ToString(), notificationPayload));
 				case (NotificationPlatform.Fcm, false):
-					return JsonConvert.SerializeObject(new FcmSoundNotification().CreateDefaultNotification(notificationPayload, notificationType.ToString()));
+					return JsonConvert.SerializeObject(new FcmSoundNotification().CreateDefaultNotification(message, notificationType.ToString(), notificationPayload));
 				default:
 					return string.Empty;
 			}

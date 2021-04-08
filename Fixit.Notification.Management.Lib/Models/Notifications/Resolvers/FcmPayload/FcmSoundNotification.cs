@@ -12,5 +12,8 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.FcmPa
 
 		[DataMember, JsonProperty(PropertyName = "action")]
 		public string Action { get; set; }
+
+		[DataMember, JsonProperty(PropertyName = "data")]
+		public FcmData Data { get; set; }
 	}
 }

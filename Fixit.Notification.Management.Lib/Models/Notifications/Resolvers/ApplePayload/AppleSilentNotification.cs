@@ -11,9 +11,13 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.Apple
 		public AppleSilentPushSettings ApplePushSettings { get; set; }
 
 		[DataMember, JsonProperty(PropertyName = "message")]
-		public object Message { get; set; }
+		public string Message { get; set; }
 
 		[DataMember, JsonProperty(PropertyName = "action")]
 		public string Action { get; set; }
+
+		// TODO: test in apple device
+		[DataMember, JsonProperty(PropertyName = "fixitdata")]
+		public object FixitData { get; set; }
 	}
 }

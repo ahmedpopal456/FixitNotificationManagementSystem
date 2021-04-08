@@ -10,6 +10,6 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers.FcmPa
 		public string Title { get; set; }
 
 		[DataMember, JsonProperty(PropertyName = "body")]
-		public object Body { get; set; }
+		public string Body { get; set; }
 	}
 }

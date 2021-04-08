@@ -12,6 +12,9 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications
 	public class NotificationDto : IFakeSeederAdapter<NotificationDto>
 	{
 		[DataMember]
+		public string Message { get; set; }
+
+		[DataMember]
 		public PayloadBaseDto Payload { get; set; }
 
 		[DataMember]
