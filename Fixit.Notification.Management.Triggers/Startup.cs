@@ -25,7 +25,7 @@ namespace Fixit.Notification.Management.Triggers
 		public override void Configure(IFunctionsHostBuilder builder)
 		{
 			_configuration = (IConfiguration)builder.Services.BuildServiceProvider()
-													.GetService(typeof(IConfiguration));
+																											 .GetService(typeof(IConfiguration));
 
 			var mapperConfig = new MapperConfiguration(mc =>
 			{

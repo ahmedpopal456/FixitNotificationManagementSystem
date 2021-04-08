@@ -32,7 +32,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Installations
 		public long UpdatedTimestampUtc { get; set; }
 
 		#region IFakeSeederAdapter
-		public IList<DeviceInstallationDocument> SeedFakeDtos()
+		public new IList<DeviceInstallationDocument> SeedFakeDtos()
 		{
 			return new List<DeviceInstallationDocument>
 			{

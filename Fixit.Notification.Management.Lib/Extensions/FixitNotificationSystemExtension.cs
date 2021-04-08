@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Fixit.Core.DataContracts;
+﻿using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Decorators.Exceptions;
 using Fixit.Notification.Management.Lib.Mediators;
 using Fixit.Notification.Management.Lib.Mediators.Internal;
