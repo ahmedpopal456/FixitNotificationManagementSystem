@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Fixit.Notification.Management.Lib.Mediators;
+using Fixit.Notification.Management.Lib.Models.Notifications;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 using Fixit.Notification.Management.Lib.Models.Notifications.Resolvers;
 using Microsoft.Azure.NotificationHubs;
@@ -43,7 +44,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 			int taskComplete = 1;
 
 			// validate queue message
-			NotificationQueueRequestDto notificationDto = JsonConvert.DeserializeObject<NotificationQueueRequestDto>(queuedNotificationMessage);
+			NotificationDto notificationDto = JsonConvert.DeserializeObject<NotificationDto>(queuedNotificationMessage);
 			if (notificationDto == null)
 			{
 				throw new InvalidOperationException($"{nameof(OnQueueNotifyUsers)} was unable to properly deserialize {nameof(queuedNotificationMessage)}...");

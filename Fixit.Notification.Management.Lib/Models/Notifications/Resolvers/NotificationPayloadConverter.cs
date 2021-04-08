@@ -6,9 +6,9 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers
 {
 	public static class NotificationPayloadConverter
 	{
-		public static string Serialize(NotificationQueueRequestDto notificationQueueRequestDto, NotificationPlatform notificationPlatform)
+		public static string Serialize(NotificationDto notificationDto, NotificationPlatform notificationPlatform)
 		{
-			return NotificationPayloadResolver.Resolve(notificationQueueRequestDto.Payload, notificationQueueRequestDto.Message, notificationQueueRequestDto.Silent, notificationQueueRequestDto.Action, notificationPlatform);
+			return NotificationPayloadResolver.Resolve(notificationDto.Payload, notificationDto.Message, notificationDto.Silent, notificationDto.Action, notificationPlatform);
 		}
 	}
 }

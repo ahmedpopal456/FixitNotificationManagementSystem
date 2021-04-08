@@ -78,15 +78,6 @@ namespace Fixit.Notification.Management.Lib.Mappers
 				.ForMember(notificationDto => notificationDto.CreatedTimestampUtc, opts => opts.Ignore())
 				.ReverseMap();
 
-			CreateMap<NotificationQueueRequestDto, NotificationDto>()
-				.ForMember(notificationDto => notificationDto.Payload, opts => opts.Ignore())
-				.ForMember(notificationDto => notificationDto.Action, opts => opts.MapFrom(notificationQueueRequestDto => notificationQueueRequestDto.Action))
-				.ForMember(notificationDto => notificationDto.Tags, opts => opts.MapFrom(notificationQueueRequestDto => notificationQueueRequestDto.Tags))
-				.ForMember(notificationDto => notificationDto.Recipients, opts => opts.MapFrom(notificationQueueRequestDto => notificationQueueRequestDto.Recipients))
-				.ForMember(notificationDto => notificationDto.Silent, opts => opts.MapFrom(notificationQueueRequestDto => notificationQueueRequestDto.Silent))
-				.ForMember(notificationDto => notificationDto.CreatedTimestampUtc, opts => opts.MapFrom(notificationQueueRequestDto => notificationQueueRequestDto.CreatedTimestampUtc))
-				.ForMember(notificationDto => notificationDto.Retries, opts => opts.MapFrom(notificationQueueRequestDto => notificationQueueRequestDto.Retries));
-
 			#endregion
 		}
 	}

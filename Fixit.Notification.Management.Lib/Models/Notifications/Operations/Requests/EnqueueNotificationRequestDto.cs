@@ -14,7 +14,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
 	public class EnqueueNotificationRequestDto : IDtoValidator, IFakeSeederAdapter<EnqueueNotificationRequestDto>
 	{
 		[DataMember]
-		public PayloadBaseDto Payload { get; set; }
+		public object Payload { get; set; }
 
 		[DataMember]
 		public NotificationTypes Action { get; set; }

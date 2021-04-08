@@ -15,7 +15,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications
 		public string Message { get; set; }
 
 		[DataMember]
-		public PayloadBaseDto Payload { get; set; }
+		public object Payload { get; set; }
 
 		[DataMember]
 		public NotificationTypes Action { get; set; }
