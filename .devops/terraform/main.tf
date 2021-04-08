@@ -99,7 +99,7 @@ resource "azurerm_function_app" "main" {
     "FIXIT-NMS-ANH-NAME"          = azurerm_notification_hub.main.name
 
     "FIXIT-GOOGLE-DISTANCEMATRIX-URI" = "https://maps.googleapis.com/maps/api/distancematrix/json",
-    "FIXIT-GOOGLE-API-KEY"            = data.azurerm_key_vault_secret.google_maps_api_key,
+    "FIXIT-GOOGLE-API-KEY"            = data.azurerm_key_vault_secret.google_maps_api_key.value,
     "FIXIT-UMS-SERVICE-EP"            = "https://${var.organization_name}-${var.environment_name}-ums-api.azurewebsites.net/",
     "FIXIT-MDM-SERVICE-EP"            = "https://${var.organization_name}-${var.environment_name}-mdm-api.azurewebsites.net/",
   }
