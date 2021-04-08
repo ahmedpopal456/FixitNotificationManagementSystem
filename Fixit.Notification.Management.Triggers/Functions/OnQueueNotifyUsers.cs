@@ -43,8 +43,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 			int taskComplete = 1;
 
 			// validate queue message
-			JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-			NotificationQueueRequestDto notificationDto = JsonConvert.DeserializeObject<NotificationQueueRequestDto>(queuedNotificationMessage, settings);
+			NotificationQueueRequestDto notificationDto = JsonConvert.DeserializeObject<NotificationQueueRequestDto>(queuedNotificationMessage);
 			if (notificationDto == null)
 			{
 				throw new InvalidOperationException($"{nameof(OnQueueNotifyUsers)} was unable to properly deserialize {nameof(queuedNotificationMessage)}...");

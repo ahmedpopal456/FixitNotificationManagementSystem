@@ -71,8 +71,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 			notificationDto.CreatedTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
 			// serialize message
-			JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-			string notificationJson = JsonConvert.SerializeObject(notificationDto, Formatting.Indented, settings);
+			string notificationJson = JsonConvert.SerializeObject(notificationDto);
 			string base64EncodedNotification = Convert.ToBase64String(Encoding.UTF8.GetBytes(notificationJson));
 
 			// enqueue notification
