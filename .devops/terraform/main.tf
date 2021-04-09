@@ -81,12 +81,14 @@ resource "azurerm_function_app" "main" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage"             = "UseDevelopmentStorage=false",
+    "AzureWebJobsStorage"             = azurerm_storage_account.app[each.key].primary_connection_string,
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE" = "true",
     "WEBSITE_RUN_FROM_PACKAGE"        = "1",
     "APPINSIGHTS_INSTRUMENTATIONKEY"  = data.azurerm_application_insights.main.instrumentation_key,
     "WEBSITE_NODE_DEFAULT_VERSION"    = "10.14.1"
     "FUNCTIONS_WORKER_RUNTIME"        = "dotnet",
+
+    "FIXIT-FMS-DB-CS" = "AccountEndpoint=${data.azurerm_cosmosdb_account.main.endpoint};AccountKey=${data.azurerm_cosmosdb_account.main.primary_key};",
 
     "FIXIT-NMS-DB-EP"            = data.azurerm_cosmosdb_account.main.endpoint,
     "FIXIT-NMS-DB-KEY"           = data.azurerm_cosmosdb_account.main.primary_key,
@@ -119,16 +121,4 @@ resource "azurerm_cosmosdb_sql_container" "main" {
   account_name        = data.azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
   partition_key_path  = "/EntityId"
-
-  indexing_policy {
-    indexing_mode = "Consistent"
-
-    included_path {
-      path = "/*"
-    }
-
-    excluded_path {
-      path = "/\"_etag\"/?"
-    }
-  }
 }
