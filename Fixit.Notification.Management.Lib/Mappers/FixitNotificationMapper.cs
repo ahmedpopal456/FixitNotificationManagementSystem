@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Fixit.Core.DataContracts.Notifications.Payloads;
+using Fixit.Notification.Management.Lib.Models;
 using Fixit.Notification.Management.Lib.Models.Notifications;
 using Fixit.Notification.Management.Lib.Models.Notifications.Installations;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
@@ -76,6 +78,19 @@ namespace Fixit.Notification.Management.Lib.Mappers
 				.ForMember(notificationDto => notificationDto.Silent, opts => opts.MapFrom(enqueueNotificationRequestDto => enqueueNotificationRequestDto.Silent))
 				.ForMember(notificationDto => notificationDto.Retries, opts => opts.MapFrom(enqueueNotificationRequestDto => enqueueNotificationRequestDto.Retries))
 				.ForMember(notificationDto => notificationDto.CreatedTimestampUtc, opts => opts.Ignore())
+				.ReverseMap();
+
+			CreateMap<FixDocument, FixAssignmentValidationDto>()
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.AssignedToCraftsman, opts => opts.MapFrom(fixDocument => fixDocument.AssignedToCraftsman))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.ClientBudget, opts => opts.MapFrom(fixDocument => fixDocument.ClientEstimatedCost))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.SystemCalculatedCost, opts => opts.MapFrom(fixDocument => fixDocument.SystemCalculatedCost))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CraftsmanEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.CraftsmanEstimatedCost))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Schedule, opts => opts.MapFrom(fixDocument => fixDocument.Schedule))
+				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkCategory.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.FirstOrDefault().Category))
+				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkType.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.FirstOrDefault().Type))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Location, opts => opts.MapFrom(fixDocument => fixDocument.Location))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Images, opts => opts.MapFrom(fixDocument => fixDocument.Images))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.FixDetails, opts => opts.MapFrom(fixDocument => fixDocument.Details.FirstOrDefault()))
 				.ReverseMap();
 
 			#endregion

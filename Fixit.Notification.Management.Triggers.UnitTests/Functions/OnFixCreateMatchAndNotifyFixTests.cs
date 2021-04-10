@@ -10,8 +10,9 @@ using Fixit.Notification.Management.Lib.Mediators.Internal;
 using Fixit.Notification.Management.Lib.Models;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 using Fixit.Notification.Management.Triggers.Functions;
-using Microsoft.Azure.Documents;
+using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -49,7 +50,7 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 												.Returns(_fakeLogger.Object);
 
 			_cancellationToken = CancellationToken.None;
-			_onFixCreateMatchAndNotifyFix = new OnFixCreateMatchAndNotifyFix(_fakeConfiguration.Object, _fakeLoggerFactory.Object, _fakeNotificationMediator.Object, _fakeFixClassificationMediator.Object);
+			_onFixCreateMatchAndNotifyFix = new OnFixCreateMatchAndNotifyFix(_mapperConfiguration.CreateMapper(), _fakeConfiguration.Object, _fakeLoggerFactory.Object, _fakeNotificationMediator.Object, _fakeFixClassificationMediator.Object);
 			_fixAndCraftsmenMatchMediator = new FixClassificationMediator(_mapperConfiguration.CreateMapper(), _fakeHttpUmClient.Object, _fakeHttpMdMClient.Object, _distanceMatrixUrl, _googleApiKey);
 		}
 

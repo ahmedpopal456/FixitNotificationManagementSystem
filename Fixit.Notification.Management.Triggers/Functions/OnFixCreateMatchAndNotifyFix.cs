@@ -13,6 +13,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Fixit.Core.DataContracts.Notifications.Payloads;
+using AutoMapper;
 
 namespace Fixit.Notification.Management.Triggers.Functions
 {
@@ -21,12 +23,15 @@ namespace Fixit.Notification.Management.Triggers.Functions
         private readonly ILogger _logger;
         private readonly INotificationMediator _notificationMediator;
         private readonly IFixClassificationMediator _fixClassificationMediator;
+        private readonly IMapper _mapper;
 
-        public OnFixCreateMatchAndNotifyFix(IConfiguration configurationProvider,
+        public OnFixCreateMatchAndNotifyFix(IMapper mapper,
+                                            IConfiguration configurationProvider,
                                             ILoggerFactory loggerFactory,
                                             INotificationMediator notificationMediator,
                                             IFixClassificationMediator fixClassificationMediator)
         {
+            _mapper = mapper ?? throw new ArgumentNullException($"{nameof(OnFixCreateMatchAndNotifyFix)} expects a value for {nameof(mapper)}... null argument was provided");
             _logger = loggerFactory.CreateLogger<OnFixCreateMatchAndNotifyFix>();
             _notificationMediator = notificationMediator ?? throw new ArgumentNullException($"{nameof(OnFixCreateMatchAndNotifyFix)} expects a value for {nameof(notificationMediator)}... null argument was provided");
             _fixClassificationMediator = fixClassificationMediator ?? throw new ArgumentNullException($"{nameof(OnFixCreateMatchAndNotifyFix)} expects a value for {nameof(fixClassificationMediator)}... null argument was provided");
@@ -36,7 +41,9 @@ namespace Fixit.Notification.Management.Triggers.Functions
         public async Task RunAsync([CosmosDBTrigger(databaseName: "fixit",
                                                     collectionName: "Fixes",
                                                     ConnectionStringSetting = "FIXIT-FMS-DB-CS",
-                                                    LeaseCollectionName = "leases", CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> rawFixDocuments, CancellationToken cancellationToken)
+                                                    LeaseCollectionName = "leases",
+                                                    LeaseCollectionPrefix = "matchandnotify",
+                                                    CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> rawFixDocuments, CancellationToken cancellationToken)
         {
             await MatchAndNotifyFix(rawFixDocuments, cancellationToken);
         }
@@ -57,7 +64,8 @@ namespace Fixit.Notification.Management.Triggers.Functions
                     // Get qualified craftsmen list 
                     var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() { Recipients = await _fixClassificationMediator.GetMinimalQualitifedCraftmen(fixDocument, cancellationToken) };
 
-                    // specify action type
+                    // specify action type 
+                    enqueueNotificationRequestDto.Payload = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
                     enqueueNotificationRequestDto.Action = NotificationTypes.FixClientRequest;
 
                     // enqueue notification
