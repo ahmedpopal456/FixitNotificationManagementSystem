@@ -77,9 +77,8 @@ namespace Fixit.Notification.Management.Triggers.Functions
 				notificationOutcome = await notify();
 
 				// check notification outcome
-				if (notificationOutcome == null &&
-						((notificationOutcome.State == NotificationOutcomeState.Abandoned) ||
-						(notificationOutcome.State == NotificationOutcomeState.Unknown)))
+				if ((notificationOutcome.State == NotificationOutcomeState.Abandoned) ||
+					(notificationOutcome.State == NotificationOutcomeState.Unknown))
 				{
 					var errorMessage = $"{nameof(OnQueueNotifyUsers)} failed to notify devices with platform {notificationPlatform}";
 					_logger.LogError(errorMessage);
