@@ -72,10 +72,9 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
 			// serialize message
 			string notificationJson = JsonConvert.SerializeObject(notificationDto);
-			string base64EncodedNotification = Convert.ToBase64String(Encoding.UTF8.GetBytes(notificationJson));
 
 			// enqueue notification
-			var operationStatus = await _notificationsQueue.SendMessageAsync(base64EncodedNotification, TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
+			var operationStatus = await _notificationsQueue.SendMessageAsync(notificationJson, TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
 
 			return operationStatus;
 		}

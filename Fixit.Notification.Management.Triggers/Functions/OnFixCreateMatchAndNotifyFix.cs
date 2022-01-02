@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Fixit.Core.DataContracts.Notifications.Payloads;
 using AutoMapper;
+using Newtonsoft.Json.Serialization;
 
 namespace Fixit.Notification.Management.Triggers.Functions
 {
@@ -38,50 +39,39 @@ namespace Fixit.Notification.Management.Triggers.Functions
         }
 
         [FunctionName("OnFixCreateMatchAndNotifyFix")]
-        public async Task RunAsync([CosmosDBTrigger(databaseName: "fixit",
-                                                    collectionName: "Fixes",
-                                                    ConnectionStringSetting = "FIXIT-FMS-DB-CS",
-                                                    LeaseCollectionName = "leases",
-                                                    LeaseCollectionPrefix = "matchandnotify",
-                                                    CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> rawFixDocuments, CancellationToken cancellationToken)
+        public async Task RunAsync([QueueTrigger("fixit-dev-fms-queue", Connection = "FIXIT-FMS-STORAGEACCOUNT-CS")] string queuedOnFixCreateMessage, CancellationToken cancellationToken)
         {
-            await MatchAndNotifyFix(rawFixDocuments, cancellationToken);
+            await MatchAndNotifyFix(queuedOnFixCreateMessage, cancellationToken);
         }
 
-        public async Task<int> MatchAndNotifyFix(IReadOnlyList<Document> rawFixDocuments, CancellationToken cancellationToken)
+        public async Task<int> MatchAndNotifyFix(string queuedOnFixCreateMessage, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             int taskComplete = 1;
-            var exceptions = new ConcurrentQueue<ApplicationException>();
+            var fixDocument = JsonConvert.DeserializeObject<FixDocument>(queuedOnFixCreateMessage);
 
-            Parallel.ForEach(rawFixDocuments, async rawFixDocument =>
+            // verify if document new
+            if (fixDocument.CreatedTimestampUtc.Equals(fixDocument.UpdatedTimestampUtc))
             {
-                var fixDocument = JsonConvert.DeserializeObject<FixDocument>(rawFixDocument.ToString());
+                // Get qualified craftsmen list 
+                var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() { Recipients = await _fixClassificationMediator.GetMinimalQualitifedCraftmen(fixDocument, cancellationToken) };
 
-                // verify if document new
-                if (fixDocument.CreatedTimestampUtc.Equals(fixDocument.UpdatedTimestampUtc))
+                // specify action type 
+                var fixAssignmentValidationDto = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
+                var jsonSerializerSettings = new JsonSerializerSettings
                 {
-                    // Get qualified craftsmen list 
-                    var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() { Recipients = await _fixClassificationMediator.GetMinimalQualitifedCraftmen(fixDocument, cancellationToken) };
+                  ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+                enqueueNotificationRequestDto.Payload = JsonConvert.SerializeObject(fixAssignmentValidationDto, jsonSerializerSettings);
+                enqueueNotificationRequestDto.Action = NotificationTypes.FixClientRequest;
 
-                    // specify action type 
-                    enqueueNotificationRequestDto.Payload = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
-                    enqueueNotificationRequestDto.Action = NotificationTypes.FixClientRequest;
-
-                    // enqueue notification
-                    var operationStatus = await _notificationMediator.EnqueueNotificationAsync(enqueueNotificationRequestDto, cancellationToken);
-                    if (!operationStatus.IsOperationSuccessful)
-                    {
-                        var errorMessage = $"{nameof(OnFixCreateMatchAndNotifyFix)} failed to enqueue fix with id {fixDocument.id} with message {operationStatus.OperationException}";
-                        _logger.LogError(errorMessage);
-                        exceptions.Enqueue(new ApplicationException(errorMessage));
-                    }
+                // enqueue notification
+                var operationStatus = await _notificationMediator.EnqueueNotificationAsync(enqueueNotificationRequestDto, cancellationToken);
+                if (!operationStatus.IsOperationSuccessful)
+                {
+                    var errorMessage = $"{nameof(OnFixCreateMatchAndNotifyFix)} failed to enqueue fix with id {fixDocument.id} with message {operationStatus.OperationException}";
+                    _logger.LogError(errorMessage);
                 }
-            });
-
-            if (exceptions.Any())
-            {
-                throw new AggregateException(exceptions);
             }
 
             return taskComplete;

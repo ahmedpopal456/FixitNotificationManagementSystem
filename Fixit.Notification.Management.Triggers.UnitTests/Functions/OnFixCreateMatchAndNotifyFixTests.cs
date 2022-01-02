@@ -59,7 +59,7 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 		public async Task OnFixCreateMatchAndNotifyFix_NewDocuments_ReturnsCompletedTask()
 		{
 			// Arrange
-			var rawFixDocuments = new List<Document> { new Document() };
+			var rawFixDocuments = new Document().ToString();
 			var operationStatus = new OperationStatus { IsOperationSuccessful = true };
 			_fakeNotificationMediator.Setup(notificationMediator => notificationMediator.EnqueueNotificationAsync(It.IsAny<EnqueueNotificationRequestDto>(), It.IsAny<CancellationToken>()))
 															 .ReturnsAsync(operationStatus);
@@ -72,19 +72,6 @@ namespace Fixit.Notification.Management.Triggers.UnitTests.Functions
 			Assert.IsTrue(Convert.ToBoolean(actionResult));
 		}
 
-		[TestMethod]
-		public async Task OnFixCreateMatchAndNotifyFix_EnqueueFails_ReturnsNotCompletedTask()
-		{
-			// Arrange
-			var rawFixDocuments = new List<Document> { new Document() };
-			var operationStatus = new OperationStatus { IsOperationSuccessful = false, OperationException = new Exception("failed") };
-			_fakeNotificationMediator.Setup(notificationMediator => notificationMediator.EnqueueNotificationAsync(It.IsAny<EnqueueNotificationRequestDto>(), It.IsAny<CancellationToken>()))
-															 .ReturnsAsync(operationStatus);
-
-			// Act and Assert
-			await Assert.ThrowsExceptionAsync<AggregateException>(async () => await _onFixCreateMatchAndNotifyFix.MatchAndNotifyFix(rawFixDocuments, _cancellationToken));
-		}
 		#endregion
-
 	}
 }

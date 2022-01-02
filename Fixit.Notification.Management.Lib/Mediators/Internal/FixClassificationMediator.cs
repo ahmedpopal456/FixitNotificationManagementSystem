@@ -106,7 +106,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
         private async Task<IEnumerable<WorkCategoryDto>> GetQualifiedSkillList(FixDocument fixDocument, CancellationToken cancellationToken)
         {
             // Get qualified Skills for fix request
-            var fixDetails = fixDocument.Details.FirstOrDefault();
+            var fixDetails = fixDocument.Details;
             var skillList = await _fixItHttpMdmClient.GetWorkCategoriesAsync(cancellationToken, fixDetails.Category);
             return skillList;
         }
@@ -125,7 +125,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
             // Get Craftsman users
             List<UserDto> users = await _fixItHttpUmClient.GetUsers("Craftsman", cancellationToken);
             List<UserDocument> craftsmenList = new List<UserDocument>();
-            users?.ForEach(user => { craftsmenList.Add(_mapper.Map<UserDto, UserDocument>(user)); });
+            users?.Where(user => user.Address != null).ToList().ForEach(user => { craftsmenList.Add(_mapper.Map<UserDto, UserDocument>(user)); });
             return craftsmenList;
         }
     }

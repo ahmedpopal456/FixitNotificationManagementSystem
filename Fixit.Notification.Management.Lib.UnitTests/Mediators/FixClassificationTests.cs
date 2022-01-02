@@ -42,21 +42,6 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 
         #region FixClassificationMediator
 
-        [TestMethod]
-		[ExpectedException(typeof(ArgumentNullException),
-			"Value cannot be null. (Parameter 'FixClassificationBuilder expects the craftsmenList to have a list user craftsmen')")]
-		public async Task GetMinimalQualitifedCraftmen_NoCraftsmenListThrowException()
-		{
-			// Arrange
-			var cancellationToken = CancellationToken.None;
-			var fixDocument = new FixDocument();
-
-			// Act
-			await _fixAndCraftsmenMatchMediator.GetMinimalQualitifedCraftmen(fixDocument, cancellationToken);
-		}
-
-
-		[TestMethod]
 		public async Task GetMinimalQualitifedCraftmen_ReturnsSuccess()
         {
 			// Arrange

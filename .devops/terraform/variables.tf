@@ -43,3 +43,7 @@ variable "cosmosdb_tables" {
     installations = "NotificationDeviceInstallations",
   }
 }
+
+variable "fms_connection_string" {
+  type = string
+}

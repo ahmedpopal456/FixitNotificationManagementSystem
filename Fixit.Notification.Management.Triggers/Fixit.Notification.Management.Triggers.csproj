@@ -17,6 +17,9 @@
 		<ProjectReference Include="..\Fixit.Notification.Management.Lib\Fixit.Notification.Management.Lib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Update="local.settings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="host.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

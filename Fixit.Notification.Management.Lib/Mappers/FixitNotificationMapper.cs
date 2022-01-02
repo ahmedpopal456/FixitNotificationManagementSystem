@@ -86,11 +86,11 @@ namespace Fixit.Notification.Management.Lib.Mappers
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.SystemCalculatedCost, opts => opts.MapFrom(fixDocument => fixDocument.SystemCalculatedCost))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CraftsmanEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.CraftsmanEstimatedCost))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Schedule, opts => opts.MapFrom(fixDocument => fixDocument.Schedule))
-				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkCategory.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.FirstOrDefault().Category))
-				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkType.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.FirstOrDefault().Type))
+				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkCategory.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.Category))
+				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkType.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.Type))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Location, opts => opts.MapFrom(fixDocument => fixDocument.Location))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Images, opts => opts.MapFrom(fixDocument => fixDocument.Images))
-				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.FixDetails, opts => opts.MapFrom(fixDocument => fixDocument.Details.FirstOrDefault()))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.FixDetails, opts => opts.MapFrom(fixDocument => fixDocument.Details))
 				.ReverseMap();
 
 			#endregion

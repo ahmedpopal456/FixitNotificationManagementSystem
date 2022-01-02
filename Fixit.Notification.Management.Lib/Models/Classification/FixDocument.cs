@@ -29,7 +29,7 @@ namespace Fixit.Notification.Management.Lib.Models
         public IEnumerable<TagDto> Tags { get; set; }
 
         [DataMember]
-        public IEnumerable<FixDetailsDto> Details { get; set; }
+        public FixDetailsDto Details { get; set; }
 
         [DataMember]
         public IEnumerable<FileDto> Images { get; set; }
@@ -78,16 +78,13 @@ namespace Fixit.Notification.Management.Lib.Models
         {
             FixDocument firstFixDocument = new FixDocument
             {
-                Details = new List<FixDetailsDto>()
-                {
-                    new FixDetailsDto()
+                Details = new FixDetailsDto()
                     {
                         Name = "Restore Brick Wall",
                         Description = "An area of the exposed brick wall in the dining space  is crumbling and cracked. Help is needed to restore the damaged area.",
                         Category = "Masonry",
                         Type = "Quick Fix"
-                    }
-                },
+                    },
                 Tags = new List<TagDto>
                 {
                     new TagDto

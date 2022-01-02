@@ -85,7 +85,7 @@ namespace Fixit.Notification.Management.Lib.Builders
 
         public FixClassificationBuilder ClassifyCraftsmenAvailability(float maxScore=10, float availabilityScoreWeight = 0.25f)
         {
-            if(_fixRequest.Details.FirstOrDefault().Type == WorkType.QuickFix)
+            if(_fixRequest.Details.Type == WorkType.QuickFix)
             {
                 var fixStartSchedule = DateTimeExtensions.ConvertUtcTimeStampToDateTime(_fixRequest.Schedule.ToList()[0].StartTimestampUtc);
                 DateTime fixStartTime = DateTimeExtensions.AdjustDateTime(fixStartSchedule);
