@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Fixit.Core.Database;
 using Fixit.Core.Database.Mediators;
+using Fixit.Core.DataContracts.Decorators.Extensions;
 using Fixit.Core.Storage;
-using Fixit.Core.Storage.Queue.Mediators;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Extensions;
 using Fixit.Notification.Management.Lib.Mappers;
-using Fixit.Notification.Management.Lib.Mediators;
 using Fixit.Notification.Management.ServerlessApi;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.NotificationHubs;
@@ -33,6 +33,7 @@ namespace Fixit.Notification.Management.ServerlessApi
 			DatabaseFactory databaseFactory = new DatabaseFactory(_configuration["FIXIT-NMS-DB-EP"], _configuration["FIXIT-NMS-DB-KEY"]);
 
 			builder.AddFixitNotificationServices();
+			builder.Services.AddFixitCoreDecoratorServices();
 			builder.Services.AddSingleton<IDatabaseMediator>(databaseFactory.CreateCosmosClient());
 			builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());
 			builder.Services.AddSingleton<IQueueServiceClientMediator>(storageFactory.CreateQueueServiceClientMediator());

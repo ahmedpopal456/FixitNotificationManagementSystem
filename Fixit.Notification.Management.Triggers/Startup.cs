@@ -2,7 +2,6 @@
 using Fixit.Core.Database;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.Storage;
-using Fixit.Core.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Extensions;
 using Fixit.Notification.Management.Lib.Mappers;
 using Fixit.Notification.Management.Triggers;
@@ -15,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Fixit.Core.Networking.Extensions;
 using Fixit.Core.Networking.Local.UMS;
 using Fixit.Core.Networking.Local.MDM;
+using Fixit.Core.DataContracts.Decorators.Extensions;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fixit.Notification.Management.Triggers
@@ -50,6 +51,7 @@ namespace Fixit.Notification.Management.Triggers
 				return NotificationHubClient.CreateClientFromConnectionString(notificationHubConnectionString, notificationHubName);
 			});
 
+			builder.Services.AddFixitCoreDecoratorServices();
 			builder.Services.AddUmServices(_configuration["FIXIT-UMS-SERVICE-EP"]);
 			builder.Services.AddMdmServices(_configuration["FIXIT-MDM-SERVICE-EP"]);
 			builder.Services.AddSingleton<IFixClassificationMediator, FixClassificationMediator>(serviceProvider =>

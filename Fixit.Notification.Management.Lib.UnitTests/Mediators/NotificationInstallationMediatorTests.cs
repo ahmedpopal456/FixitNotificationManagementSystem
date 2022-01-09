@@ -41,7 +41,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			_fakeDatabaseTableEntityMediator = new Mock<IDatabaseTableEntityMediator>();
 			_fakeNotificationHubClient = new Mock<INotificationHubClient>();
 			_fakeLogger = new Mock<ILogger<NotificationInstallationMediator>>().Object;
-			_fakeOperationStatusExceptionDecorator = new Mock<IExceptionDecorator<OperationStatus>>();
+			_fakeOperationStatusExceptionDecorator = new Mock<IExceptionDecorator>();
 
 			_fakeConfiguration.Setup(configuration => configuration["FIXIT-NMS-DB-NAME"])
 												.Returns(_userDatabaseName);
@@ -76,7 +76,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			_fakeNotificationHubClient.Setup(notificationHubClient => notificationHubClient.CreateOrUpdateInstallationAsync(It.IsAny<Installation>(), It.IsAny<CancellationToken>()))
 																.Returns(Task.CompletedTask);
 
-			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(It.IsAny<OperationStatus>(), It.IsAny<Func<Task>>()))
+			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(true, It.IsAny<Func<Task>>(), It.IsAny<OperationStatus>()))
 																						.Returns(Task.FromResult(initialOperationStatus));
 
 			_fakeDatabaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<DeviceInstallationDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -107,7 +107,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			_fakeNotificationHubClient.Setup(notificationHubClient => notificationHubClient.CreateOrUpdateInstallationAsync(It.IsAny<Installation>(), It.IsAny<CancellationToken>()))
 																.Returns(Task.CompletedTask);
 
-			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(It.IsAny<OperationStatus>(), It.IsAny<Func<Task>>()))
+			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(It.IsAny<bool>(), It.IsAny<Func<Task>>(), It.IsAny<OperationStatus>()))
 																						.Returns(Task.FromResult(initialOperationStatus));
 
 			// Act
@@ -279,8 +279,8 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 			_fakeNotificationHubClient.Setup(notificationHubClient => notificationHubClient.DeleteInstallationAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
 																.Returns(Task.CompletedTask);
 
-			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(It.IsAny<OperationStatus>(), It.IsAny<Func<Task>>()))
-																						.Returns(Task.FromResult(initialOperationStatus));
+			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(true, It.IsAny<Func<Task>>(), It.IsAny<OperationStatus>()))
+																																									.Returns(Task.FromResult(initialOperationStatus));
 
 			_fakeDatabaseTableEntityMediator.Setup(database => database.DeleteItemAsync<DeviceInstallationDocument>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 																			.Returns(Task.FromResult(updatedOperationStatus));
@@ -310,9 +310,9 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
 																.Returns(Task.FromResult(installation));
 
 			_fakeNotificationHubClient.Setup(notificationHubClient => notificationHubClient.DeleteInstallationAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-																.Returns(Task.CompletedTask);
+																													.ThrowsAsync(new Exception());
 
-			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(It.IsAny<OperationStatus>(), It.IsAny<Func<Task>>()))
+			_fakeOperationStatusExceptionDecorator.Setup(exceptionDecorator => exceptionDecorator.ExecuteOperationAsync(true, It.IsAny<Func<Task>>(), It.IsAny<OperationStatus>()))
 																						.Returns(Task.FromResult(initialOperationStatus));
 
 			// Act

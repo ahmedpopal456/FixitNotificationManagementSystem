@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Decorators.Exceptions;
-using Fixit.Core.Storage.Queue.Mediators;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Mediators;
 using Fixit.Notification.Management.Lib.Mediators.Internal;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;

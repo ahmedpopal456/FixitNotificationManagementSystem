@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fixit.Core.DataContracts;
-using Fixit.Core.Storage.Queue.Mediators;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Models.Notifications;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 using Microsoft.Extensions.Configuration;

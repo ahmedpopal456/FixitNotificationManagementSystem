@@ -11,7 +11,6 @@ namespace Fixit.Notification.Management.Lib.Extensions
 	{
 		public static void AddFixitNotificationServices(this IFunctionsHostBuilder builder)
 		{
-			builder.Services.AddSingleton<IExceptionDecorator<OperationStatus>, OperationStatusExceptionDecorator>();
 			builder.Services.AddSingleton<INotificationMediator, NotificationMediator>();
 			builder.Services.AddTransient<INotificationInstallationMediator, NotificationInstallationMediator>();
 		}

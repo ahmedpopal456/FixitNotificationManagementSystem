@@ -3,7 +3,7 @@ using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Decorators.Exceptions;
 using Fixit.Core.DataContracts.Seeders;
-using Fixit.Core.Storage.Queue.Mediators;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 using Fixit.Notification.Management.Lib.Mappers;
 using Fixit.Notification.Management.Lib.Seeders;
 using Microsoft.Azure.NotificationHubs;
@@ -24,7 +24,7 @@ namespace Fixit.Notification.Management.Lib.UnitTests
 		protected Mock<IDatabaseTableMediator> _fakeDatabaseTableMediator;
 		protected Mock<IDatabaseTableEntityMediator> _fakeDatabaseTableEntityMediator;
 		protected Mock<INotificationHubClient> _fakeNotificationHubClient;
-		protected Mock<IExceptionDecorator<OperationStatus>> _fakeOperationStatusExceptionDecorator;
+		protected Mock<IExceptionDecorator> _fakeOperationStatusExceptionDecorator;
 		protected Mock<IQueueServiceClientMediator> _fakeQueueServiceClientMediator;
 		public TestBase()
 		{

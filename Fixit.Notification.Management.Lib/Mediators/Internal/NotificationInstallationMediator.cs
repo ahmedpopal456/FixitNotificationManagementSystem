@@ -27,7 +27,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 		private readonly IMapper _mapper;
 		private readonly IDatabaseTableEntityMediator _deviceInstallationContainer;
 		private readonly INotificationHubClient _notificationHubClient;
-		private readonly IExceptionDecorator<OperationStatus> _exceptionDecorator;
+		private readonly IExceptionDecorator _exceptionDecorator;
 		private readonly string UserPrefix = "userId";
 
 		public NotificationInstallationMediator(IDatabaseMediator databaseMediator,
@@ -35,7 +35,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 																						INotificationHubClient notificationHubClient,
 																						IConfiguration configuration,
 																						ILogger<NotificationInstallationMediator> logger,
-																						IExceptionDecorator<OperationStatus> exceptionDecorator)
+																						IExceptionDecorator exceptionDecorator)
 		{
 			var databaseName = configuration["FIXIT-NMS-DB-NAME"];
 			var deviceInstallationsContainerName = configuration["FIXIT-NMS-DB-INSTALLATIONS"];
@@ -68,7 +68,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 																							IMapper mapper,
 																							INotificationHubClient notificationHubClient,
 																							ILogger<NotificationInstallationMediator> logger,
-																							IExceptionDecorator<OperationStatus> exceptionDecorator,
+																							IExceptionDecorator exceptionDecorator,
 																							string databaseName,
 																							string deviceInstallationsContainerName)
 		{
@@ -113,7 +113,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 			updateInstallation.Templates = deviceInstallationUpsertRequestDto.Templates?.Select(template => new { template.Key, Value = _mapper.Map<NotificationTemplateBaseDto, InstallationTemplate>(template.Value) }).ToDictionary(pair => pair.Key, pair => pair.Value);
 
 			// apply device installation
-			operationStatus = await _exceptionDecorator.ExecuteOperationAsync(operationStatus, () => _notificationHubClient.CreateOrUpdateInstallationAsync(updateInstallation, cancellationToken));
+			operationStatus = await _exceptionDecorator.ExecuteOperationAsync(true, () => _notificationHubClient.CreateOrUpdateInstallationAsync(updateInstallation, cancellationToken), operationStatus);
 			if (operationStatus.IsOperationSuccessful)
 			{
 				var currentTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -222,7 +222,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 			if (deviceInstallation != null)
 			{
 				// delete device installation
-				operationStatus = await _exceptionDecorator.ExecuteOperationAsync(operationStatus, () => _notificationHubClient.DeleteInstallationAsync(installationId, cancellationToken));
+				operationStatus = await _exceptionDecorator.ExecuteOperationAsync(true, () => _notificationHubClient.DeleteInstallationAsync(installationId, cancellationToken), operationStatus);
 				if (operationStatus.IsOperationSuccessful)
 				{
 					// delete installation record

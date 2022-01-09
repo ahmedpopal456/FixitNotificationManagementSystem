@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Fixit.Core.Database;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Fixes.Cost;
 using Fixit.Core.DataContracts.Fixes.Details;
 using Fixit.Core.DataContracts.Fixes.Enums;

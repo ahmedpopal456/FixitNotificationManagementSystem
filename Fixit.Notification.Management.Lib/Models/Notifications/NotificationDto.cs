@@ -44,7 +44,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications
 				{
 					Payload = new PayloadBaseDto
 					{
-						Id = Guid.Parse("3441a80b-cf00-41f5-80f1-b069f1d3cda6")
+						Id = "3441a80b-cf00-41f5-80f1-b069f1d3cda6"
 					},
 					Action = NotificationTypes.FixClientRequest,
 					Tags = new List<NotificationTagDto>

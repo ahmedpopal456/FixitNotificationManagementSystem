@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Fixit.Core.Database;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Seeders;
 
 namespace Fixit.Notification.Management.Lib.Models
