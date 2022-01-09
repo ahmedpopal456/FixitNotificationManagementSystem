@@ -1,5 +1,5 @@
 ﻿using Fixit.Core.DataContracts.Classifications;
-using Fixit.Core.DataContracts.Users.Skills;
+using Fixit.Core.DataContracts.Users.Skill;
 using Fixit.Notification.Management.Lib.Models;
 using System.Collections.Generic;
 

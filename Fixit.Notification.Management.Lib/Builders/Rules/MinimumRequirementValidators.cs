@@ -1,4 +1,4 @@
-﻿using Fixit.Core.DataContracts.Users.Skills;
+﻿using Fixit.Core.DataContracts.Users.Skill;
 using Fixit.Notification.Management.Lib.Models;
 using Fixit.Notification.Management.Lib.Models.Classification;
 using System;

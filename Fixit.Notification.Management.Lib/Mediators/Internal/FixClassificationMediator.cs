@@ -89,8 +89,8 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
                     .GetQualifiedCraftsmenByAverage();
 
             List<UserSummaryDto> result = GetQualifiedCraftsmenList(builder);
-            return result;
-        }
+      return result;
+    }
 
         private List<UserSummaryDto> GetQualifiedCraftsmenList(FixClassificationBuilder builder)
         {
@@ -125,7 +125,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
             // Get Craftsman users
             List<UserDto> users = await _fixItHttpUmClient.GetUsers("Craftsman", cancellationToken);
             List<UserDocument> craftsmenList = new List<UserDocument>();
-            users?.Where(user => user.Address != null).ToList().ForEach(user => { craftsmenList.Add(_mapper.Map<UserDto, UserDocument>(user)); });
+            users?.Where(user => user.SavedAddresses != null).ToList().ForEach(user => { craftsmenList.Add(_mapper.Map<UserDto, UserDocument>(user)); });
             return craftsmenList;
         }
     }

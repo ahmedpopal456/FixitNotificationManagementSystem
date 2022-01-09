@@ -27,7 +27,7 @@ namespace Fixit.Notification.Management.Lib.Mappers
 				.ForMember(userDocument => userDocument.FirstName, opts => opts.MapFrom(userDto => userDto.FirstName))
 				.ForMember(userDocument => userDocument.LastName, opts => opts.MapFrom(userDto => userDto.LastName))
 				.ForMember(userDocument => userDocument.State, opts => opts.MapFrom(userDto => userDto.State))
-				.ForMember(userDocument => userDocument.Address, opts => opts.MapFrom(userDto => userDto.Address))
+				.ForMember(userDocument => userDocument.SavedAddresses, opts => opts.MapFrom(userDto => userDto.SavedAddresses))
 				.ForMember(userDocument => userDocument.Role, opts => opts.MapFrom(userDto => userDto.Role))
 				.ForMember(userDocument => userDocument.Status, opts => opts.MapFrom(userDto => userDto.Status))
 				.ForMember(userDocument => userDocument.Availability, opts => opts.MapFrom(userDto => userDto.Availability))

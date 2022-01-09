@@ -9,7 +9,7 @@ using Fixit.Core.DataContracts.Users.Availabilities;
 using Fixit.Core.DataContracts.Users.Documents;
 using Fixit.Core.DataContracts.Users.Enums;
 using Fixit.Core.DataContracts.Users.Profile;
-using Fixit.Core.DataContracts.Users.Skills;
+using Fixit.Core.DataContracts.Users.Skill;
 
 namespace Fixit.Notification.Management.Lib.Models
 {
@@ -32,7 +32,7 @@ namespace Fixit.Notification.Management.Lib.Models
         public UserState State { get; set; }
 
         [DataMember]
-        public AddressDto Address { get; set; }
+        public IEnumerable<UserAddressDto> SavedAddresses { get; set; }
 
         [DataMember]
         public UserRole Role { get; set; }
@@ -71,15 +71,6 @@ namespace Fixit.Notification.Management.Lib.Models
                 LastName = "Doe",
                 UserPrincipalName = "johnDoe@test.com",
                 Role = UserRole.Craftsman,
-                Address = new AddressDto()
-                {
-                    Address = "123 Something",
-                    City = "Montreal",
-                    Province = "Quebec",
-                    Country = "Canada",
-                    PostalCode = "A1A 1A1",
-                    PhoneNumber = "514-123-4567"
-                },
                 Skills = new List<SkillDto>()
                 {
                     new SkillDto

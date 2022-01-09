@@ -12,6 +12,7 @@ using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.FixPlans;
 using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
+using Fixit.Core.DataContracts.Users.Address;
 
 namespace Fixit.Notification.Management.Lib.Models
 {
@@ -35,7 +36,7 @@ namespace Fixit.Notification.Management.Lib.Models
         public IEnumerable<FileDto> Images { get; set; }
 
         [DataMember]
-        public FixLocationDto Location { get; set; }
+        public AddressDto Location { get; set; }
 
         [DataMember]
         public IEnumerable<FixScheduleRangeDto> Schedule { get; set; }
@@ -93,12 +94,8 @@ namespace Fixit.Notification.Management.Lib.Models
                         Name = "Brick Wall"
                     }
                 },
-                Location = new FixLocationDto()
+                Location = new AddressDto()
                 {
-                    Address = "1365 Rue Jean-Brillon",
-                    City = "LaSalle",
-                    Province = "Quebec",
-                    PostalCode = "H8N 1R8"
                 },
                 Schedule = new List<FixScheduleRangeDto>()
                 {

@@ -1,4 +1,4 @@
-﻿using Fixit.Core.DataContracts.Users.Skills;
+﻿using Fixit.Core.DataContracts.Users.Skill;
 using Fixit.Core.Networking.Local.MDM;
 using Fixit.Core.Networking.Local.UMS;
 using Fixit.Notification.Management.Lib.Builders;
@@ -75,24 +75,6 @@ namespace Fixit.Notification.Management.Lib.UnitTests.Mediators
             // Assert
             Assert.IsNotNull(actionResult);
         }
-
-        [TestMethod]
-		[ExpectedException(typeof(UriFormatException), "Invalid URI: The format of the URI could not be determined.")]
-		public void ClassifyCraftsmenLocation_ReturnsInvalidUriException()
-		{
-			// Arrange
-			var craftsman = new UserDocument().SeedFakeDtos().First();
-			var fixDocument = new FixDocument().SeedFakeDtos().First();
-			var craftsmenList = new List<UserDocument>() { craftsman };
-
-			// Act
-			var actionResult = new FixClassificationBuilder(fixDocument, craftsmenList);
-			actionResult.ClassifyCraftsmenLocation(_distanceMatrixUrl, _googleApiKey);
-
-			// Assert
-			Assert.IsNotNull(actionResult);
-			Assert.AreEqual(1, actionResult.GetCraftsmenScores().Count);
-		}
 		 
 		[TestMethod]
 		public void ClassifyCraftsmenAvailability_ReturnsSuccess()

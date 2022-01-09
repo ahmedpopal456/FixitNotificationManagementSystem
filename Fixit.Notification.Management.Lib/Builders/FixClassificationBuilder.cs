@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Fixit.Core.DataContracts.Users.Skills;
 using Fixit.Notification.Management.Lib.Models;
 using Fixit.Notification.Management.Lib.Builders.Extensions;
 using Fixit.Notification.Management.Lib.Builders.Rules;
 using static Fixit.Notification.Management.Lib.Builders.Utils.MathUtils;
-using static Fixit.Notification.Management.Lib.Builders.Extensions.StringBuilderExtensions;
 using Fixit.Core.DataContracts.Users.Enums;
 using Fixit.Notification.Management.Lib.Models.Classification;
+using Fixit.Core.DataContracts.Users.Skill;
 
 namespace Fixit.Notification.Management.Lib.Builders
 {
@@ -54,15 +53,12 @@ namespace Fixit.Notification.Management.Lib.Builders
 
         public FixClassificationBuilder ClassifyCraftsmenLocation(string distanceMatrixUri, string googleApiKey, int maximumDistance=200000, int maximumDuration=7200, float maxScore=10, float n = 1.5f, float proximityScoreWeight = 0.25f)
         {
-            var fixLocation = _fixRequest.Location;
-            var fixDestination = ConstructLocationAddress(fixLocation.Address, fixLocation.City, fixLocation.Province, fixLocation.PostalCode);
             _craftsmenScores.ToList().ForEach(craftsmanScore =>
             {
-                var craftsmanLocation = craftsmanScore.UserDocument.Address;
+                var craftsmanLocation = craftsmanScore.UserDocument.SavedAddresses;
                 if(craftsmanLocation != null)
                 {
-                    var craftsmanAdress = ConstructLocationAddress(craftsmanLocation.Address, craftsmanLocation.City, craftsmanLocation.Province, craftsmanLocation.PostalCode, craftsmanLocation.Country);
-                    var responseFromServer = GoogleDistanceMatrixApi.GetLocationDistanceAndDuration(distanceMatrixUri, craftsmanAdress, fixDestination, googleApiKey);
+                    var responseFromServer = GoogleDistanceMatrixApi.GetLocationDistanceAndDuration(distanceMatrixUri, craftsmanLocation.First(address => address.IsCurrentAddress).Address.FormattedAddress, _fixRequest.Location.FormattedAddress, googleApiKey);
                 
                     if (MinimumRequirementValidators.HasMinimumLocationRequirement(maximumDistance, maximumDuration, responseFromServer, out double distance, out double duration))
                     {

@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Fixit.Core.Database" Version="1.0.36-alpha" />
-    <PackageReference Include="Fixit.Core.Database.DataContracts" Version="1.0.36-alpha" />
+    <PackageReference Include="Fixit.Core.Database" Version="1.0.45-alpha" />
+    <PackageReference Include="Fixit.Core.Database.DataContracts" Version="1.0.48-alpha" />
     <PackageReference Include="Fixit.Core.Networking" Version="1.0.8-alpha" />
     <PackageReference Include="Fixit.Core.Storage" Version="1.0.25-alpha" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />

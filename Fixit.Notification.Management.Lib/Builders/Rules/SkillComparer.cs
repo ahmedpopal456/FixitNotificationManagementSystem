@@ -1,4 +1,4 @@
-﻿using Fixit.Core.DataContracts.Users.Skills;
+﻿using Fixit.Core.DataContracts.Users.Skill;
 using System.Collections.Generic;
 
 namespace Fixit.Notification.Management.Lib.Builders.Rules

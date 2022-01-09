@@ -90,7 +90,9 @@ namespace Fixit.Notification.Management.Lib.Mappers
 				.ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkType.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.Type))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Location, opts => opts.MapFrom(fixDocument => fixDocument.Location))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Images, opts => opts.MapFrom(fixDocument => fixDocument.Images))
-				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.FixDetails, opts => opts.MapFrom(fixDocument => fixDocument.Details))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Details, opts => opts.MapFrom(fixDocument => fixDocument.Details))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CreatedByClient, opts => opts.MapFrom(fixDocument => fixDocument.CreatedByClient))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Tags, opts => opts.MapFrom(fixDocument => fixDocument.Tags))
 				.ReverseMap();
 
 			#endregion
