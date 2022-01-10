@@ -82,7 +82,7 @@ namespace Fixit.Notification.Management.Lib.Mappers
 
 			CreateMap<FixDocument, FixAssignmentValidationDto>()
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.AssignedToCraftsman, opts => opts.MapFrom(fixDocument => fixDocument.AssignedToCraftsman))
-				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.ClientBudget, opts => opts.MapFrom(fixDocument => fixDocument.ClientEstimatedCost))
+				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.ClientEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.ClientEstimatedCost))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.SystemCalculatedCost, opts => opts.MapFrom(fixDocument => fixDocument.SystemCalculatedCost))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CraftsmanEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.CraftsmanEstimatedCost))
 				.ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Schedule, opts => opts.MapFrom(fixDocument => fixDocument.Schedule))
