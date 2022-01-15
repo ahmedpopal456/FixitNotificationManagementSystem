@@ -79,18 +79,19 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
         {
             List<UserDocument> craftsmenList = await GetCraftsmenList(cancellationToken);
             List<RatingListDocument> ratingList = await GetRatingList(cancellationToken);
-            IEnumerable<WorkCategoryDto> skillList = await GetQualifiedSkillList(fixDocument, cancellationToken);
+            //IEnumerable<WorkCategoryDto> skillList = await GetQualifiedSkillList(fixDocument, cancellationToken);
 
             var builder = new FixClassificationBuilder(fixDocument, craftsmenList);
             builder.ClassifyCraftsmenLocation(_distanceMatrixUri, _googleApiKey)
-                    .ClassifyCraftsmenSkill(skillList.FirstOrDefault()?.Skills)
-                    .ClassifyCraftsmenAvailability()
-                    .ClassifyCraftsmenRating(ratingList)
-                    .GetQualifiedCraftsmenByAverage();
+                    .ClassifyCraftsmenRating(ratingList);
+                    //.ClassifyCraftsmenSkill(skillList.FirstOrDefault()?.Skills)
+                    //.ClassifyCraftsmenAvailability()
+                    //.ClassifyCraftsmenRating(ratingList)
+                    //.GetQualifiedCraftsmenByAverage();
 
             List<UserSummaryDto> result = GetQualifiedCraftsmenList(builder);
-      return result;
-    }
+            return result;
+        }
 
         private List<UserSummaryDto> GetQualifiedCraftsmenList(FixClassificationBuilder builder)
         {
