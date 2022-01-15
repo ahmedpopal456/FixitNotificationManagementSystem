@@ -6,7 +6,7 @@ terraform {
     access_key           = "__storagekey__"
   }
 
-  required_version = "=0.14.5"
+  required_version = "=1.1.3"
 
   required_providers {
     azurerm = {
