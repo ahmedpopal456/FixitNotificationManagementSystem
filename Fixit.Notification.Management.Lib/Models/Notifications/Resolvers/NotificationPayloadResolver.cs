@@ -10,7 +10,7 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Resolvers
 {
 	public static class NotificationPayloadResolver
 	{
-		public static string Resolve(object notificationPayload, string message, bool isSilent, NotificationTypes notificationType, NotificationPlatform notificationPlatform)
+		public static string Resolve(object notificationPayload, bool isSilent, NotificationTypes notificationType, NotificationPlatform notificationPlatform, string message = "Knock Knock")
 		{
 			switch (notificationPlatform, isSilent)
 			{
