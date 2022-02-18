@@ -58,11 +58,7 @@ namespace Fixit.Notification.Management.Triggers.Functions
 
                 // specify action type 
                 var fixAssignmentValidationDto = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
-                var jsonSerializerSettings = new JsonSerializerSettings
-                {
-                  ContractResolver = new CamelCasePropertyNamesContractResolver()
-                };
-                enqueueNotificationRequestDto.Payload = JsonConvert.SerializeObject(fixAssignmentValidationDto, jsonSerializerSettings);
+                enqueueNotificationRequestDto.Payload = fixAssignmentValidationDto;
                 enqueueNotificationRequestDto.Action = NotificationTypes.FixClientRequest;
 
                 // enqueue notification
