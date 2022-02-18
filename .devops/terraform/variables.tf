@@ -14,6 +14,26 @@ variable "location_name" {
   type = string
 }
 
+variable "apns_credential_application_mode" {
+  type    = string
+}
+
+variable "apns_credential_bundle_id" {
+  type    = string
+}
+
+variable "apns_credential_key_id" {
+  type    = string
+}
+
+variable "apns_credential_team_id" {
+  type    = string
+}
+
+variable "apns_credential_token" {
+  type    = string
+}
+
 variable "organization_name" {
   type    = string
   default = "fixit"
