@@ -42,6 +42,14 @@ resource "azurerm_notification_hub" "main" {
   gcm_credential {
     api_key = data.azurerm_key_vault_secret.gcm_key.value
   }
+
+  apns_credential {
+    application_mode  = var.apns_credential_application_mode
+    bundle_id         = var.apns_credential_bundle_id
+    key_id            = var.apns_credential_key_id
+    team_id           = var.apns_credential_team_id
+    token             = var.apns_credential_token
+  }
 }
 
 resource "azurerm_notification_hub_authorization_rule" "main" {
