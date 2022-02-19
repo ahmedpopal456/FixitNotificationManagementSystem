@@ -68,10 +68,9 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       var notificationDto = _mapper.Map<EnqueueNotificationRequestDto, NotificationDto>(enqueueNotificationRequestDto);
 
       notificationDto.CreatedTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-      enqueueNotificationRequestDto.Payload = enqueueNotificationRequestDto.Payload != null ? JsonConvert.SerializeObject(enqueueNotificationRequestDto.Payload) : null;
+      enqueueNotificationRequestDto.Payload = enqueueNotificationRequestDto.Payload != null ? enqueueNotificationRequestDto.Payload: null;
 
-      string notificationJson = JsonConvert.SerializeObject(notificationDto, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-      var operationStatus = await _notificationsQueue.SendMessageAsync(notificationJson, TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
+      var operationStatus = await _notificationsQueue.SendMessageAsync(JsonConvert.SerializeObject(notificationDto, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }), TimeSpan.FromSeconds(0), TimeSpan.FromDays(7), cancellationToken);
 
       return operationStatus;
     }
