@@ -62,6 +62,17 @@ resource "azurerm_notification_hub_authorization_rule" "main" {
   listen                = true
 }
 
+resource "azurerm_eventgrid_topic" "topics" {
+  for_each            = var.eventgrid_topics
+  name                = "${var.organization_name}-${var.environment_name}-${var.service_abbreviation}-${each.value}-tpc"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  tags = {
+    environment = "Production"
+  }
+}
+
 resource "azurerm_app_service_plan" "main" {
   name                = "${var.organization_name}-${var.environment_name}-${var.service_abbreviation}-service-plan"
   location            = azurerm_resource_group.main.location
@@ -101,6 +112,7 @@ resource "azurerm_function_app" "main" {
     "FIXIT-NMS-DB-EP"            = data.azurerm_cosmosdb_account.main.endpoint,
     "FIXIT-NMS-DB-KEY"           = data.azurerm_cosmosdb_account.main.primary_key,
     "FIXIT-NMS-DB-INSTALLATIONS" = azurerm_cosmosdb_sql_container.main["installations"].name,
+    "FIXIT-NMS-DB-NOTIFICATIONS" = azurerm_cosmosdb_sql_container.main["userNotifications"].name,
     "FIXIT-NMS-DB-NAME"          = var.organization_name,
 
     "FIXIT-NMS-QUEUE-NAME"        = azurerm_storage_queue.main.name,
@@ -113,6 +125,13 @@ resource "azurerm_function_app" "main" {
     "FIXIT-GOOGLE-API-KEY"            = data.azurerm_key_vault_secret.google_maps_api_key.value,
     "FIXIT-UMS-SERVICE-EP"            = "https://${var.organization_name}-${var.environment_name}-ums-api.azurewebsites.net/",
     "FIXIT-MDM-SERVICE-EP"            = "https://${var.organization_name}-${var.environment_name}-mdm-api.azurewebsites.net/",
+
+    "FIXIT-NMS-EG-ONNOTIFICATIONSENQUEUE-TK" = azurerm_eventgrid_topic.topics["onNotificationEnqueued"].primary_access_key,
+    "FIXIT-NMS-EG-ONNOTIFICATIONSENQUEUE-TE" = azurerm_eventgrid_topic.topics["onNotificationEnqueued"].endpoint,
+    "FIXIT-NMS-EG-ONNOTIFICATIONSTORED-TK" = azurerm_eventgrid_topic.topics["onNotificationStored"].primary_access_key,
+    "FIXIT-NMS-EG-ONNOTIFICATIONSTORED-TE" = azurerm_eventgrid_topic.topics["onNotificationStored"].endpoint,
+    "FIXIT-NMS-EG-ONNOTIFICATIONDISPATCHEDFORSTORAGE-TK" = azurerm_eventgrid_topic.topics["onNotificationDispatched"].primary_access_key,
+    "FIXIT-NMS-EG-ONNOTIFICATIONDISPATCHEDFORSTORAGE-TE" = azurerm_eventgrid_topic.topics["onNotificationDispatched"].endpoint,    
   }
 }
 

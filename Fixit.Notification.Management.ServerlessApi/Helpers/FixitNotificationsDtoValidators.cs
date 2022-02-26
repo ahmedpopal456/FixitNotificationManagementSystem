@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http;
 using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
+using Fixit.Core.DataContracts.Notifications.Operations;
 
 namespace Fixit.Notification.Management.ServerlessApi.Helpers
 {

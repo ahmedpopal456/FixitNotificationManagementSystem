@@ -9,8 +9,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.OpenApi.Models;
 using Fixit.Notification.Management.Lib.Mediators;
-using Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requests;
 using Fixit.Notification.Management.ServerlessApi.Helpers;
+using Fixit.Core.DataContracts.Notifications.Operations;
 
 namespace Fixit.Notification.Management.ServerlessApi.Functions.Notifications
 {

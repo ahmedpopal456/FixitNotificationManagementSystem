@@ -57,10 +57,20 @@ variable "function_apps" {
   ]
 }
 
+variable "eventgrid_topics" {
+  type = map(string)
+  default = {
+    onNotificationEnqueued = "onnotificationenqueued",
+    onNotificationDispatched = "onnotificationdispatched",
+    onNotificationStored = "onnotificationstored",
+  }
+}
+
 variable "cosmosdb_tables" {
   type = map(string)
   default = {
     installations = "NotificationDeviceInstallations",
+    userNotifications = "UserNotifications"
   }
 }
 

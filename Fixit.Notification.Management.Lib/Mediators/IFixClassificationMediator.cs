@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Fixit.Notification.Management.Lib.Mediators
 {
-    public interface IFixClassificationMediator
-    {
-        /// <summary>
-        /// Returns a list of qualified craftsmen to be notified
-        /// </summary>
-        /// <param name="fixDocument">Fix request used to classify craftsmen</param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>Returns list of qualified craftsmen</returns>
-        Task<List<UserSummaryDto>> GetMinimalQualitifedCraftmen(FixDocument fixDocument, CancellationToken cancellationToken);
-    }
+  public interface IFixClassificationMediator
+  {
+    /// <summary>
+    /// Returns a list of qualified craftsmen to be notified
+    /// </summary>
+    /// <param name="fixDocument">Fix request used to classify craftsmen</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns list of qualified craftsmen</returns>
+    Task<List<UserSummaryDto>> GetMinimalQualitifedCraftmen(FixDocument fixDocument, CancellationToken cancellationToken);
+  }
 }

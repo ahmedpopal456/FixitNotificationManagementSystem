@@ -18,221 +18,195 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 [assembly: InternalsVisibleTo("Fixit.Notification.Management.Lib.UnitTests"),
-					 InternalsVisibleTo("DynamicProxyGenAssembly2")]
+      InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Fixit.Notification.Management.Lib.Mediators.Internal
 {
-	internal class NotificationInstallationMediator : INotificationInstallationMediator
-	{
-		private readonly ILogger<NotificationInstallationMediator> _logger;
-		private readonly IMapper _mapper;
-		private readonly IDatabaseTableEntityMediator _deviceInstallationContainer;
-		private readonly INotificationHubClient _notificationHubClient;
-		private readonly IExceptionDecorator _exceptionDecorator;
-		private readonly string UserPrefix = "userId";
+  internal class NotificationInstallationMediator : INotificationInstallationMediator
+  {
+    private readonly ILogger<NotificationInstallationMediator> _logger;
+    private readonly IMapper _mapper;
+    private readonly IDatabaseTableEntityMediator _deviceInstallationContainer;
+    private readonly INotificationHubClient _notificationHubClient;
+    private readonly IExceptionDecorator _exceptionDecorator;
+    private readonly string _userPrefix = "userId";
 
-		public NotificationInstallationMediator(IDatabaseMediator databaseMediator,
-																						IMapper mapper,
-																						INotificationHubClient notificationHubClient,
-																						IConfiguration configuration,
-																						ILogger<NotificationInstallationMediator> logger,
-																						IExceptionDecorator exceptionDecorator)
-		{
-			var databaseName = configuration["FIXIT-NMS-DB-NAME"];
-			var deviceInstallationsContainerName = configuration["FIXIT-NMS-DB-INSTALLATIONS"];
+    public NotificationInstallationMediator(IDatabaseMediator databaseMediator,
+                        IMapper mapper,
+                        INotificationHubClient notificationHubClient,
+                        IConfiguration configuration,
+                        ILogger<NotificationInstallationMediator> logger,
+                        IExceptionDecorator exceptionDecorator)
+    {
+      var databaseName = configuration["FIXIT-NMS-DB-NAME"];
+      var deviceInstallationsContainerName = configuration["FIXIT-NMS-DB-INSTALLATIONS"];
 
-			if (databaseMediator == null)
-			{
-				throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
-			}
+      if (databaseMediator == null)
+      {
+        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
+      }
 
-			if (string.IsNullOrWhiteSpace(databaseName))
-			{
-				throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Database Name as {{EMP-INGT-DB-NAME}} ");
-			}
+      if (string.IsNullOrWhiteSpace(databaseName))
+      {
+        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Database Name as {{EMP-INGT-DB-NAME}} ");
+      }
 
-			if (string.IsNullOrWhiteSpace(deviceInstallationsContainerName))
-			{
-				throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Notifications Device Installations Table as {{FIXIT-NMS-DB-INSTALLATION}} ");
-			}
+      if (string.IsNullOrWhiteSpace(deviceInstallationsContainerName))
+      {
+        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Notifications Device Installations Table as {{FIXIT-NMS-DB-INSTALLATION}} ");
+      }
 
-			_exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-			_notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-			_mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
-			_logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
+      _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
+      _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
+      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
 
-			var database = databaseMediator.GetDatabase(databaseName);
-			_deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
-		}
+      var database = databaseMediator.GetDatabase(databaseName);
+      _deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
+    }
 
-		internal NotificationInstallationMediator(IDatabaseMediator databaseMediator,
-																							IMapper mapper,
-																							INotificationHubClient notificationHubClient,
-																							ILogger<NotificationInstallationMediator> logger,
-																							IExceptionDecorator exceptionDecorator,
-																							string databaseName,
-																							string deviceInstallationsContainerName)
-		{
-			if (databaseMediator == null)
-			{
-				throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
-			}
+    internal NotificationInstallationMediator(IDatabaseMediator databaseMediator,
+                         IMapper mapper,
+                         INotificationHubClient notificationHubClient,
+                         ILogger<NotificationInstallationMediator> logger,
+                         IExceptionDecorator exceptionDecorator,
+                         string databaseName,
+                         string deviceInstallationsContainerName)
+    {
+      if (databaseMediator == null)
+      {
+        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
+      }
 
-			if (string.IsNullOrWhiteSpace(databaseName))
-			{
-				throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(databaseName)}... null argument was provided");
-			}
+      if (string.IsNullOrWhiteSpace(databaseName))
+      {
+        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(databaseName)}... null argument was provided");
+      }
 
-			if (string.IsNullOrWhiteSpace(deviceInstallationsContainerName))
-			{
-				throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(deviceInstallationsContainerName)}... null argument was provided");
-			}
+      if (string.IsNullOrWhiteSpace(deviceInstallationsContainerName))
+      {
+        throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(deviceInstallationsContainerName)}... null argument was provided");
+      }
 
-			_exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-			_notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
-			_mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
-			_logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
+      _exceptionDecorator = exceptionDecorator ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
+      _notificationHubClient = notificationHubClient ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(notificationHubClient)}... null argument was provided");
+      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects a value for {nameof(logger)}... null argument was provided");
 
-			var database = databaseMediator.GetDatabase(databaseName);
-			_deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
-		}
+      var database = databaseMediator.GetDatabase(databaseName);
+      _deviceInstallationContainer = database.GetContainer(deviceInstallationsContainerName);
+    }
 
-		#region Create or Update Installations
+    #region Create or Update Installations
 
-		public async Task<OperationStatus> UpsertInstallationAsync(DeviceInstallationUpsertRequestDto deviceInstallationUpsertRequestDto, CancellationToken cancellationToken)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
+    public async Task<OperationStatus> UpsertInstallationAsync(DeviceInstallationUpsertRequestDto deviceInstallationUpsertRequestDto, CancellationToken cancellationToken)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
 
-			var operationStatus = new OperationStatus { IsOperationSuccessful = true };
-			var updateInstallation = _mapper.Map<DeviceInstallationUpsertRequestDto, Installation>(deviceInstallationUpsertRequestDto);
+      var operationStatus = new OperationStatus { IsOperationSuccessful = true };
+      var updateInstallation = _mapper.Map<DeviceInstallationUpsertRequestDto, Installation>(deviceInstallationUpsertRequestDto);
+      updateInstallation.Tags ??= new List<string>();
+      updateInstallation.Tags.Add($"{_userPrefix}:{deviceInstallationUpsertRequestDto.UserId}");
+      updateInstallation.Tags = updateInstallation.Tags.Distinct().ToList();
+      updateInstallation.Templates = deviceInstallationUpsertRequestDto.Templates?.Select(template => new { template.Key, Value = _mapper.Map<NotificationTemplateBaseDto, InstallationTemplate>(template.Value) }).ToDictionary(pair => pair.Key, pair => pair.Value);
+      
+      operationStatus = await _exceptionDecorator.ExecuteOperationAsync(true, () => _notificationHubClient.CreateOrUpdateInstallationAsync(updateInstallation, cancellationToken), operationStatus);
+      if (operationStatus.IsOperationSuccessful)
+      {
+        var currentTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var installationDocument = _mapper.Map<DeviceInstallationUpsertRequestDto, DeviceInstallationDocument>(deviceInstallationUpsertRequestDto);
 
-			// add the user's id as a tag 
-			updateInstallation.Tags ??= new List<string>();
-			updateInstallation.Tags.Add($"{UserPrefix}:{deviceInstallationUpsertRequestDto.UserId}");
+        installationDocument.InstalledTimestampUtc = currentTimestampUtc;
+        installationDocument.UpdatedTimestampUtc = currentTimestampUtc;
 
-			// add device templates
-			updateInstallation.Templates = deviceInstallationUpsertRequestDto.Templates?.Select(template => new { template.Key, Value = _mapper.Map<NotificationTemplateBaseDto, InstallationTemplate>(template.Value) }).ToDictionary(pair => pair.Key, pair => pair.Value);
+        operationStatus = await _deviceInstallationContainer.UpsertItemAsync<DeviceInstallationDocument>(installationDocument, installationDocument.EntityId, cancellationToken);
+      }
 
-			// apply device installation
-			operationStatus = await _exceptionDecorator.ExecuteOperationAsync(true, () => _notificationHubClient.CreateOrUpdateInstallationAsync(updateInstallation, cancellationToken), operationStatus);
-			if (operationStatus.IsOperationSuccessful)
-			{
-				var currentTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+      return operationStatus;
+    }
 
-				// map request to device installation document 
-				var installationDocument = _mapper.Map<DeviceInstallationUpsertRequestDto, DeviceInstallationDocument>(deviceInstallationUpsertRequestDto);
+    #endregion
 
-				installationDocument.InstalledTimestampUtc = currentTimestampUtc;
-				installationDocument.UpdatedTimestampUtc = currentTimestampUtc;
+    #region Get Installations
 
-				// update installation record
-				operationStatus = await _deviceInstallationContainer.UpsertItemAsync<DeviceInstallationDocument>(installationDocument, installationDocument.EntityId, cancellationToken);
-			}
+    public async Task<DeviceInstallationDto> GetInstallationByIdAsync(string installationId, CancellationToken cancellationToken)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
 
-			return operationStatus;
-		}
+      DeviceInstallationDto deviceInstallationDto = default;
 
-		#endregion
+      var installationResponse = await _exceptionDecorator.ExecuteOperationWithReturnAsync(true, async () => await _notificationHubClient.GetInstallationAsync(installationId, cancellationToken));
+      if (installationResponse != default && installationResponse.IsOperationSuccessful)
+      {
+        var installation = installationResponse.Result;
+        deviceInstallationDto = _mapper.Map<Installation, DeviceInstallationDto>(installation);
 
-		#region Get Installations
+        var userIdTag = installation.Tags?.FirstOrDefault(tag => tag.Split(":", StringSplitOptions.None).FirstOrDefault() == _userPrefix);
+        var userIdString = userIdTag?.Split(":", StringSplitOptions.None).LastOrDefault();
 
-		public async Task<DeviceInstallationDto> GetInstallationByIdAsync(string installationId, CancellationToken cancellationToken)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
+        Guid.TryParse(userIdString, out Guid userId);
+        deviceInstallationDto.UserId = userId;
+      }
 
-			DeviceInstallationDto deviceInstallationDto = default;
-			Installation installation;
+      return deviceInstallationDto;
+    }
 
-			// get device installation dto
-			try
-			{
-				installation = await _notificationHubClient.GetInstallationAsync(installationId, cancellationToken);
-			}
-			catch (Exception exception)
-			{
-				_logger.LogError($"{nameof(NotificationHubClient)} method GetInstallationAsync failed with exception {exception}");
-				// for now to force the  500 internal error from Azure Notification Hub
-				installation = _notificationHubClient.GetInstallation(installationId);
-			}
+    public async Task<IEnumerable<DeviceInstallationDto>> GetInstallationsAsync(CancellationToken cancellationToken, NotificationPlatform? platformType = null, IEnumerable<NotificationTagDto> tags = null, IEnumerable<Guid> userIds = null)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
 
-			if (installation != default)
-			{
-				// map request to device installation document 
-				deviceInstallationDto = _mapper.Map<Installation, DeviceInstallationDto>(installation);
+      var deviceInstallationDtos = new List<DeviceInstallationDto>();
 
-				// get user id from installation
-				var userIdTag = installation.Tags?.FirstOrDefault(tag => tag.Split(":", StringSplitOptions.None).FirstOrDefault() == UserPrefix);
-				var userIdString = userIdTag?.Split(":", StringSplitOptions.None).LastOrDefault();
+      var userIdsString = userIds.Select(userId => userId.ToString());
+      tags ??= new List<NotificationTagDto>();
+      Expression<Func<DeviceInstallationDocument, bool>> expression = deviceInstallation => (platformType == null || deviceInstallation.Platform.ToString() == platformType.ToString())
+                                                 && (userIds == null || userIdsString.Contains(deviceInstallation.EntityId))
+                                                 && (deviceInstallation.Tags.Select(devTag => tags.Contains(devTag)) != null);
 
-				Guid.TryParse(userIdString, out Guid userId);
-				deviceInstallationDto.UserId = userId;
-			}
+      var deviceInstallations = new List<DeviceInstallationDocument>();
 
-			return deviceInstallationDto;
-		}
+      string continuationToken = "";
+      while (continuationToken != null)
+      {
+        var (documentCollection, tempContinuationToken) = await _deviceInstallationContainer.GetItemQueryableAsync(continuationToken, cancellationToken, expression, null);
 
-		public async Task<IEnumerable<DeviceInstallationDto>> GetInstallationsAsync(CancellationToken cancellationToken, NotificationPlatform? platformType = null, IEnumerable<NotificationTagDto> tags = null, IEnumerable<Guid> userIds = null)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
+        continuationToken = tempContinuationToken;
+        if (documentCollection.IsOperationSuccessful)
+        {
+          deviceInstallations.AddRange(documentCollection.Results);
+        }
+      }
 
-			var deviceInstallationDtos = new List<DeviceInstallationDto>();
+      if (deviceInstallations?.Any() == true)
+      {
+        deviceInstallationDtos = deviceInstallations.Select(deviceInstallation => _mapper.Map<DeviceInstallationDocument, DeviceInstallationDto>(deviceInstallation)).ToList();
+      }
 
-			// define filters
-			var userIdsString = userIds.Select(userId => userId.ToString());
-			tags ??= new List<NotificationTagDto>();
-			Expression<Func<DeviceInstallationDocument, bool>> expression = deviceInstallation => (platformType == null || deviceInstallation.Platform.ToString() == platformType.ToString())
-																																														&& (userIds == null || userIdsString.Contains(deviceInstallation.EntityId))
-																																														&& (deviceInstallation.Tags.Select(devTag => tags.Contains(devTag)) != null);
+      return deviceInstallationDtos;
+    }
 
-			// get all installations based on previous filter
-			var deviceInstallations = new List<DeviceInstallationDocument>();
+    #endregion
 
-			string continuationToken = "";
-			while (continuationToken != null)
-			{
-				var (documentCollection, tempContinuationToken) = await _deviceInstallationContainer.GetItemQueryableAsync(continuationToken, cancellationToken, expression, null);
+    #region Delete Installations
 
-				continuationToken = tempContinuationToken;
-				if (documentCollection.IsOperationSuccessful)
-				{
-					deviceInstallations.AddRange(documentCollection.Results);
-				}
-			}
+    public async Task<OperationStatus> DeleteInstallationById(string installationId, CancellationToken cancellationToken)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
 
-			// if any installations exist
-			if (deviceInstallations?.Any() == true)
-			{
-				deviceInstallationDtos = deviceInstallations.Select(deviceInstallation => _mapper.Map<DeviceInstallationDocument, DeviceInstallationDto>(deviceInstallation)).ToList();
-			}
+      var operationStatus = new OperationStatus { IsOperationSuccessful = true };
 
-			return deviceInstallationDtos;
-		}
+      var deviceInstallation = await GetInstallationByIdAsync(installationId, cancellationToken);
+      if (deviceInstallation != null)
+      {
+        operationStatus = await _exceptionDecorator.ExecuteOperationAsync(true, () => _notificationHubClient.DeleteInstallationAsync(installationId, cancellationToken));
+        if (operationStatus.IsOperationSuccessful)
+        {
+          operationStatus = await _deviceInstallationContainer.DeleteItemAsync<DeviceInstallationDocument>(installationId, deviceInstallation.UserId.ToString(), cancellationToken);
+        }
+      }
+      return operationStatus;
+    }
 
-		#endregion
+    #endregion
 
-		#region Delete Installations
-
-		public async Task<OperationStatus> DeleteInstallationById(string installationId, CancellationToken cancellationToken)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-
-			var operationStatus = new OperationStatus { IsOperationSuccessful = true };
-
-			// get device installation 
-			var deviceInstallation = await GetInstallationByIdAsync(installationId, cancellationToken);
-			if (deviceInstallation != null)
-			{
-				// delete device installation
-				operationStatus = await _exceptionDecorator.ExecuteOperationAsync(true, () => _notificationHubClient.DeleteInstallationAsync(installationId, cancellationToken), operationStatus);
-				if (operationStatus.IsOperationSuccessful)
-				{
-					// delete installation record
-					operationStatus = await _deviceInstallationContainer.DeleteItemAsync<DeviceInstallationDocument>(installationId, deviceInstallation.UserId.ToString(), cancellationToken);
-				}
-			}
-			return operationStatus;
-		}
-
-		#endregion
-
-	}
+  }
 }
