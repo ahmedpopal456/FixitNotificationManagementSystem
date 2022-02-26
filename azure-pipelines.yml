@@ -150,29 +150,7 @@ jobs:
     inputs:
       projects: '$(buildProjects)'
       arguments: '--configuration $(buildConfiguration) --no-restore'
-  
-  # Tests
-  - task: DotNetCoreCLI@2
-    displayName: Test
-    inputs:
-      command: 'test'
-      testRunTitle: 'Fixit Notification Unit Tests'
-      projects: '**/*.UnitTests.csproj'
-      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutputFormat=opencover /p:Exclude="[*]Aliencube.AzureFunctions.Extensions.OpenApi*%2c[*]Fixit.Notification.Management.Lib.Models*%2c[*]Fixit.Notification.Management.Lib.Networking*%2c[*]Fixit.Notification.Management.Lib.Extensions*%2c[*]Fixit.Notification.Management.ServerlessApi*" /p:ExcludeByFile=\"*/**/*Startup.cs%2c*/**/Fixit.Notification.Management.Lib/*AssemblyInfo.cs%2c\"'
-      nobuild: true
 
-  - script: |
-      dotnet tool install -g dotnet-reportgenerator-globaltool --version 4.8.4 --ignore-failed-sources
-      reportgenerator "-reports:$(Build.SourcesDirectory)/**/coverage.opencover.xml" "-targetdir:$(Build.SourcesDirectory)/CodeCoverage" "-reporttypes:HtmlInline_AzurePipelines;Cobertura"
-    displayName: Create Code coverage report
-
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish code coverage'
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
-      reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'     
-  
   # Run Sonar Cloud Analysis
   - task: SonarCloudAnalyze@1
     continueOnError: true
