@@ -10,14 +10,10 @@ namespace Fixit.Notification.Management.Lib.Mappers
 	{
 		public FixClassificationMapper()
 		{
-
-			CreateMap<UserDocument, UserSummaryDto>()
+			CreateMap<UserDocument, UserBaseDto>()
 				.ForMember(userSummary => userSummary.Id, opts => opts.MapFrom(userDocument => userDocument.id))
 				.ForMember(userSummary => userSummary.FirstName, opts => opts.MapFrom(userDocument => userDocument.FirstName))
 				.ForMember(userSummary => userSummary.LastName, opts => opts.MapFrom(userDocument => userDocument.LastName))
-				.ForMember(userSummary => userSummary.ProfilePictureUrl, opts => opts.MapFrom(userDocument => userDocument.ProfilePictureUrl))
-				.ForMember(userSummary => userSummary.Role, opts => opts.MapFrom(userDocument => userDocument.Role))
-				.ForMember(userSummary => userSummary.Status, opts => opts.MapFrom(userDocument => userDocument.Status))
 				.ReverseMap();
 
 			CreateMap<UserDto, UserDocument>()

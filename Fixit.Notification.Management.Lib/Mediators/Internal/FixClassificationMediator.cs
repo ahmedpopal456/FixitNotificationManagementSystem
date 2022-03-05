@@ -75,7 +75,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
         }
 
-        public async Task<List<UserSummaryDto>> GetMinimalQualitifedCraftmen(FixDocument fixDocument, CancellationToken cancellationToken)
+        public async Task<List<UserBaseDto>> GetMinimalQualitifedCraftmen(FixDocument fixDocument, CancellationToken cancellationToken)
         {
             List<UserDocument> craftsmenList = await GetCraftsmenList(cancellationToken);
             List<RatingListDocument> ratingList = await GetRatingList(cancellationToken);
@@ -89,17 +89,17 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
                     //.ClassifyCraftsmenRating(ratingList)
                     //.GetQualifiedCraftsmenByAverage();
 
-            List<UserSummaryDto> result = GetQualifiedCraftsmenList(builder);
+            List<UserBaseDto> result = GetQualifiedCraftsmenList(builder);
             return result;
         }
 
-        private List<UserSummaryDto> GetQualifiedCraftsmenList(FixClassificationBuilder builder)
+        private List<UserBaseDto> GetQualifiedCraftsmenList(FixClassificationBuilder builder)
         {
             var newCraftsmenList = builder.GetCraftsmenScores().Select(craftsman => craftsman.UserDocument).ToList();
-            var result = new List<UserSummaryDto>();
+            var result = new List<UserBaseDto>();
             newCraftsmenList.ForEach(craftsmen =>
             {
-                result.Add(_mapper.Map<UserDocument, UserSummaryDto>(craftsmen));
+                result.Add(_mapper.Map<UserDocument, UserBaseDto>(craftsmen));
             });
             return result;
         }
