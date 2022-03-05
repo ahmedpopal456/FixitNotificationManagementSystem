@@ -94,7 +94,7 @@ namespace Fixit.Notification.Management.Lib.Mappers
        .ForMember(notificationDocument => notificationDocument.UpdatedTimestampUtc, opts => opts.MapFrom(notificationCreateRequestDto => DateTimeOffset.UtcNow.ToUnixTimeSeconds()))
        .ForMember(notificationDocument => notificationDocument.EntityId, opts => opts.MapFrom(notificationCreateRequestDto => notificationCreateRequestDto.RecipientUser.Id))
        .ForMember(notificationDocument => notificationDocument.Status, opts => opts.MapFrom(notificationCreateRequestDto => NotificationStatus.Sent))
-       .ForMember(notificationDocument => notificationDocument.RecipientUser, opts => opts.Ignore())
+       .ForMember(notificationDocument => notificationDocument.RecipientUser, opts => opts.MapFrom(notificationCreateRequestDto => notificationCreateRequestDto.RecipientUser))
        .ReverseMap();
 
       CreateMap<FixDocument, FixAssignmentValidationDto>()
