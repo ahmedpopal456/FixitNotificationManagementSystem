@@ -132,6 +132,7 @@ resource "azurerm_function_app" "main" {
     "FIXIT-NMS-EG-ONNOTIFICATIONSTORED-TE" = azurerm_eventgrid_topic.topics["onNotificationStored"].endpoint,
     "FIXIT-NMS-EG-ONNOTIFICATIONDISPATCHEDFORSTORAGE-TK" = azurerm_eventgrid_topic.topics["onNotificationDispatched"].primary_access_key,
     "FIXIT-NMS-EG-ONNOTIFICATIONDISPATCHEDFORSTORAGE-TE" = azurerm_eventgrid_topic.topics["onNotificationDispatched"].endpoint,    
+    "UserTagPrefix" = "userId",
   }
 }
 
