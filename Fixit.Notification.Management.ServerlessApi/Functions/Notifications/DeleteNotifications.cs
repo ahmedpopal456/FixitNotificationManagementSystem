@@ -31,25 +31,26 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Notifications
                                          CancellationToken cancellationToken,
                                          Guid entityId)
     {
-      var notificationIds = default(IEnumerable<Guid>);
+      var notificationIds = default(IEnumerable<string>);
 
       var notificationIdstring = httpRequest.Headers.GetValues("notificationIds")?.FirstOrDefault();
       if (!string.IsNullOrWhiteSpace(notificationIdstring))
       {
-        notificationIds = notificationIdstring.Split(',')?.Select(item => Guid.TryParse(item, out Guid result) ? Guid.Parse(item) : Guid.Empty);
+        notificationIds = notificationIdstring.Split(',');
       }
 
       return await DeleteNotificationsAsync(httpRequest, notificationIds, entityId, cancellationToken);
     }
 
-    public async Task<IActionResult> DeleteNotificationsAsync(HttpRequestMessage httpRequestMessage, IEnumerable<Guid> notificationIds, Guid entityId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteNotificationsAsync(HttpRequestMessage httpRequestMessage, IEnumerable<string> notificationIds, Guid entityId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (notificationIds != null && notificationIds.Any(item => item == Guid.Empty))
+      if (notificationIds != null && notificationIds.All(item => Guid.TryParse(item, out Guid result)))
       {
         return new BadRequestObjectResult($"{nameof(notificationIds)} is not a valid list of {nameof(Guid)}..");
       }
+
       if (entityId == Guid.Empty)
       {
         return new BadRequestObjectResult($"{nameof(entityId)} is not a valid {nameof(Guid)}..");
