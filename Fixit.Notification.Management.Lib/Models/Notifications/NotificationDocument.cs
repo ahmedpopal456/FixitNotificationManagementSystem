@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace Fixit.Notification.Management.Lib.Models.Notifications
 {
   [DataContract]
-  public class NotificationDocument : DocumentBase, ITimeTraceableEntity
+  public class NotificationDocument : DocumentBase, ITimeTraceableEntity, ISoftDeletableEntity
   {
     [DataMember]
     public string Title { get; set; }
@@ -33,5 +33,11 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications
 
     [DataMember]
     public long UpdatedTimestampUtc { get; set; }
+
+    [DataMember]
+    public bool IsDeleted { get; set; }
+
+    [DataMember]
+    public long DeletedTimestampUtc { get; set; }
   }
 }

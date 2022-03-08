@@ -62,6 +62,6 @@ namespace Fixit.Notification.Management.Lib.Mediators
     /// <param name="notificationIds"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IEnumerable<OperationStatusWithObject<NotificationsDeleteResponse>>> DeleteNotificationsByBulkIdsAsync(string entityId, IEnumerable<Guid> notificationIds, CancellationToken cancellationToken);
+    Task<IEnumerable<OperationStatusWithObject<NotificationsDeleteResponse>>> DeleteNotificationsByBulkIdsAsync(string entityId, IEnumerable<string> notificationIds, CancellationToken cancellationToken);
   }
 }

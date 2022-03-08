@@ -3,6 +3,8 @@ using System.Runtime.Serialization;
 using Fixit.Core.DataContracts.Notifications.Payloads;
 using Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Data;
 using Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Settings;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Extensions
 {
@@ -12,7 +14,6 @@ namespace Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Extensions
     public static AppleSoundNotification CreateDefaultNotification(this AppleSoundNotification appleSoundNotification, Guid notificationId, string message, string action, NotificationPayloadDto notificationPayloadDto)
     {
       appleSoundNotification.Action = action;
-
       appleSoundNotification.ApplePushSettings = new AppleSoundPushSettings()
       {
         Alert = message
@@ -22,7 +23,7 @@ namespace Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Extensions
       {
         Id = notificationId.ToString(),
         Action = ((int)notificationPayloadDto.Action).ToString(),
-        SystemPayload = notificationPayloadDto.SystemPayload
+        SystemPayload = JsonConvert.SerializeObject(notificationPayloadDto.SystemPayload, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }),
       };
 
       return appleSoundNotification;

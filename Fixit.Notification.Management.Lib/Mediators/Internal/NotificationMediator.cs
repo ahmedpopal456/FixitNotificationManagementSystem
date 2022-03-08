@@ -154,7 +154,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
           var notificationUpdateRequest = notificationStatusUpdateRequestDtos.FirstOrDefault(notificationStatusUpdateRequestDto => notificationStatusUpdateRequestDto.Id.ToString() == notificationDocument.id);
           var currentTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-          notificationDocument.UpdatedTimestampUtc = notificationDocument.CreatedTimestampUtc = currentTimestampUtc;
+          notificationDocument.UpdatedTimestampUtc = currentTimestampUtc;
           notificationDocument.Status = notificationUpdateRequest.Status;
 
           updateInsightTasks.Add(Task.Run(async () =>
@@ -176,7 +176,7 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
     #region Delete Notifications 
 
-    public async Task<IEnumerable<OperationStatusWithObject<NotificationsDeleteResponse>>> DeleteNotificationsByBulkIdsAsync(string entityId, IEnumerable<Guid> notificationIds, CancellationToken cancellationToken)
+    public async Task<IEnumerable<OperationStatusWithObject<NotificationsDeleteResponse>>> DeleteNotificationsByBulkIdsAsync(string entityId, IEnumerable<string> notificationIds, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -191,21 +191,29 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
 
       var results = new List<OperationStatusWithObject<NotificationsDeleteResponse>>();
 
-      List<Task> deleteInsightTasks = new List<Task>();
-      foreach (var notificationId in notificationIds)
+      var (documentResponse, token) = await _notificationsContainer.GetItemQueryableAsync<NotificationDocument>(null, cancellationToken, insight => (notificationIds.Contains(insight.id)), null);
+      if (documentResponse.IsOperationSuccessful && notificationIds.Count() == documentResponse.Results?.Count())
       {
-        deleteInsightTasks.Add(Task.Run(async () =>
+        List<Task> deleteInsightTasks = new List<Task>();
+        foreach (var notificationDocument in documentResponse.Results)
         {
-          var result = new OperationStatusWithObject<NotificationsDeleteResponse>();
+          var currentTimestampUtc = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-          var deleteResponse = await _notificationsContainer.DeleteItemAsync<NotificationDocument>(notificationId.ToString(), parsedEntityId.ToString(), cancellationToken);
-          _mapper.Map<OperationStatus, OperationStatusWithObject<NotificationsDeleteResponse>>(deleteResponse, result);
-          result.Result = result.IsOperationSuccessful ? new NotificationsDeleteResponse() { NotificationId = notificationId } : result.Result;
-          results.Add(result);
-        }));
+          notificationDocument.UpdatedTimestampUtc = notificationDocument.DeletedTimestampUtc = currentTimestampUtc;
+          notificationDocument.IsDeleted = true;
+
+          deleteInsightTasks.Add(Task.Run(async () =>
+          {
+            var result = new OperationStatusWithObject<NotificationsDeleteResponse>();
+
+            var updateResponse = await _notificationsContainer.UpsertItemAsync<NotificationDocument>(notificationDocument, notificationDocument.EntityId, cancellationToken);
+            _mapper.Map<OperationStatus, OperationStatusWithObject<NotificationsDeleteResponse>>(updateResponse, result);
+            result.Result = result.IsOperationSuccessful ? new NotificationsDeleteResponse() { NotificationId = Guid.Parse(notificationDocument.id) } : result.Result;
+            results.Add(result);
+          }));
+        }
+        await Task.WhenAll(deleteInsightTasks);
       }
-
-      await Task.WhenAll(deleteInsightTasks);
       return results;
     }
 
@@ -225,9 +233,15 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
         MaxItemCount = pageSize
       };
 
-      PagedDocumentCollectionDto<NotificationDocument> documentResponse = await _notificationsContainer.GetItemQueryableByPageAsync<NotificationDocument>(currentPage, queryRequestOptions,cancellationToken, (document) => true);
-      if (documentResponse != null)
+      PagedDocumentCollectionDto<NotificationDocument> documentResponse = await _notificationsContainer.GetItemQueryableByPageAsync<NotificationDocument>(currentPage, queryRequestOptions,cancellationToken, (document) => document.IsDeleted == false);
+      if (documentResponse != null && documentResponse.IsOperationSuccessful)
       {
+        foreach(var document in documentResponse.Results)
+        {
+          if(document is {Payload:{SystemPayload:{ } systemPayload } } && systemPayload is{ })
+            document.Payload.SystemPayload = JsonConvert.SerializeObject(systemPayload, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+        }
+
         result.PageNumber = documentResponse.PageNumber;
         result.Results = documentResponse.Results;
         result.IsOperationSuccessful = documentResponse.IsOperationSuccessful;
