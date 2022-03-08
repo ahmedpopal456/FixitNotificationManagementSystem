@@ -33,7 +33,7 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Notifications
     {
       var notificationIds = default(IEnumerable<string>);
 
-      var notificationIdstring = httpRequest.Headers.GetValues("notificationIds")?.FirstOrDefault();
+      var notificationIdstring = httpRequest.Headers.GetValues("notificationids")?.FirstOrDefault();
       if (!string.IsNullOrWhiteSpace(notificationIdstring))
       {
         notificationIds = notificationIdstring.Split(',');
