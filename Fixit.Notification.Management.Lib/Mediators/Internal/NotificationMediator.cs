@@ -21,7 +21,9 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using Fixit.Notification.Management.Lib.Extensions;
 using static Fixit.Notification.Management.Lib.NotificationAssemblyInfo;
 
 [assembly: InternalsVisibleTo("Fixit.Notification.Management.Lib.UnitTests"),
@@ -48,8 +50,8 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
       var notificationsContainerName = configuration["FIXIT-NMS-DB-NOTIFICATIONS"];
       var databaseName = configuration["FIXIT-NMS-DB-NAME"];
 
-      _ = string.IsNullOrWhiteSpace(databaseName) ? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Database Name as {{EMP-NMS-DB-NAME}}") : string.Empty;
-      _ = string.IsNullOrWhiteSpace(notificationsContainerName) ? throw new ArgumentNullException($"{nameof(NotificationInstallationMediator)} expects the {nameof(configuration)} to have defined the Notifications Table as {{EMP-NMS-DB-NOTIFICATIONS}}") : string.Empty;
+      _ = string.IsNullOrWhiteSpace(databaseName) ? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects the {nameof(configuration)} to have defined the Database Name as {{FIXIT-NMS-DB-NAME}}") : string.Empty;
+      _ = string.IsNullOrWhiteSpace(notificationsContainerName) ? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects the {nameof(configuration)} to have defined the Notifications Table as {{FIXIT-NMS-DB-NOTIFICATIONS}}") : string.Empty;
 
       _logger = logger ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(logger)}... null argument was provided"); ;
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(NotificationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
@@ -239,7 +241,9 @@ namespace Fixit.Notification.Management.Lib.Mediators.Internal
         foreach(var document in documentResponse.Results)
         {
           if(document is {Payload:{SystemPayload:{ } systemPayload } } && systemPayload is{ })
-            document.Payload.SystemPayload = JsonConvert.SerializeObject(systemPayload, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+          {
+            document.Payload.SystemPayload = JObject.FromObject(systemPayload).ToCamelCase().ToString();
+          }
         }
 
         result.PageNumber = documentResponse.PageNumber;
