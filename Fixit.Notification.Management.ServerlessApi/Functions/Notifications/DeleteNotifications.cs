@@ -46,7 +46,7 @@ namespace Fixit.Notification.Management.ServerlessApi.Functions.Notifications
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (notificationIds != null && notificationIds.All(item => Guid.TryParse(item, out Guid result)))
+      if (notificationIds is null || !notificationIds.All(item => Guid.TryParse(item, out Guid result)))
       {
         return new BadRequestObjectResult($"{nameof(notificationIds)} is not a valid list of {nameof(Guid)}..");
       }
