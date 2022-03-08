@@ -25,7 +25,7 @@ namespace Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Extensions
       {
         Id = notificationId.ToString(),
         Action = ((int)notificationPayloadDto.Action).ToString(),
-        SystemPayload = JObject.FromObject(notificationPayloadDto).ToCamelCase().ToString()
+        SystemPayload = JObject.FromObject(notificationPayloadDto.SystemPayload).ToCamelCase().ToString()
       };
 
       return appleSoundNotification;

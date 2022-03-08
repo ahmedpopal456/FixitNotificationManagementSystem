@@ -19,7 +19,7 @@ namespace Fixit.Notification.Management.Lib.Resolvers.FcmPayload.Extensions
         Id = notificationId.ToString(),
         Action = ((int)notificationPayloadDto.Action).ToString(),
         Message = message,
-        SystemPayload = JObject.FromObject(notificationPayloadDto).ToCamelCase().ToString()
+        SystemPayload = JObject.FromObject(notificationPayloadDto.SystemPayload).ToCamelCase().ToString()
       };
 
       return fcmSilentNotification;
