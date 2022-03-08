@@ -1,7 +1,9 @@
 ﻿using Fixit.Core.DataContracts.Notifications.Payloads;
+using Fixit.Notification.Management.Lib.Extensions;
 using Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Data;
 using Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Settings;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Runtime.Serialization;
@@ -28,9 +30,9 @@ namespace Fixit.Notification.Management.Lib.Resolvers.ApplePayload.Extensions
       {
         Id = notificationId.ToString(),
         Action = ((int)notificationPayloadDto.Action).ToString(),
-        SystemPayload = JsonConvert.SerializeObject(notificationPayloadDto.SystemPayload, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }),
+        SystemPayload = JObject.FromObject(notificationPayloadDto).ToCamelCase().ToString()
       };
-
+      
       return appleSilentNotification;
     }
   }
