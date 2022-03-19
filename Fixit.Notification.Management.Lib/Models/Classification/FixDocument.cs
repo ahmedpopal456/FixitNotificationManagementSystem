@@ -11,125 +11,139 @@ using Fixit.Core.DataContracts.Fixes.Locations;
 using Fixit.Core.DataContracts.Fixes.Schedule;
 using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.FixPlans;
+using Fixit.Core.DataContracts.FixTemplates;
 using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Core.DataContracts.Users.Address;
 
 namespace Fixit.Notification.Management.Lib.Models
 {
-    /// <summary>
-    /// TODO: Move to DataContracts or Move to FMS.Lib
-    /// </summary>
-    [DataContract]
-    public class FixDocument : DocumentBase, IFakeSeederAdapter<FixDocument>
+  [DataContract]
+  public class FixDocument : DocumentBase, IFakeSeederAdapter<FixDocument>
+  {
+
+    [DataMember]
+    public UserSummaryDto AssignedToCraftsman { get; set; }
+
+    [DataMember]
+    public IEnumerable<TagDto> Tags { get; set; }
+
+    [DataMember]
+    public FixDetailsDto Details { get; set; }
+
+    [DataMember]
+    public IEnumerable<FileDto> Images { get; set; }
+
+    [DataMember]
+    public AddressDto Location { get; set; }
+
+    [DataMember]
+    public IEnumerable<FixScheduleRangeDto> Schedule { get; set; }
+
+    [DataMember]
+    public IEnumerable<LicenseDto> Licenses { get; set; }
+
+    [DataMember]
+    public FixCostRangeDto ClientEstimatedCost { get; set; }
+
+    [DataMember]
+    public float SystemCalculatedCost { get; set; }
+
+    [DataMember]
+    public FixCostEstimationDto CraftsmanEstimatedCost { get; set; }
+
+    [DataMember]
+    public long CreatedTimestampUtc { get; set; }
+
+    [DataMember]
+    public UserSummaryDto CreatedByClient { get; set; }
+
+    [DataMember]
+    public long UpdatedTimestampUtc { get; set; }
+
+    [DataMember]
+    public UserSummaryDto UpdatedByUser { get; set; }
+
+    [DataMember]
+    public FixStatuses Status { get; set; }
+
+    [DataMember]
+    public Guid ActivityHistoryId { get; set; }
+
+    [DataMember]
+    public Guid BillingActivityId { get; set; }
+
+    [DataMember]
+    public FixPlanSummaryDto PlanSummary { get; set; }
+
+    public IList<FixDocument> SeedFakeDtos()
     {
-
-        [DataMember]
-        public UserSummaryDto AssignedToCraftsman { get; set; }
-
-        [DataMember]
-        public IEnumerable<TagDto> Tags { get; set; }
-
-        [DataMember]
-        public FixDetailsDto Details { get; set; }
-
-        [DataMember]
-        public IEnumerable<FileDto> Images { get; set; }
-
-        [DataMember]
-        public AddressDto Location { get; set; }
-
-        [DataMember]
-        public IEnumerable<FixScheduleRangeDto> Schedule { get; set; }
-
-        [DataMember]
-        public FixCostRangeDto ClientEstimatedCost { get; set; }
-
-        [DataMember]
-        public float SystemCalculatedCost { get; set; }
-
-        [DataMember]
-        public FixCostEstimationDto CraftsmanEstimatedCost { get; set; }
-
-        [DataMember]
-        public long CreatedTimestampUtc { get; set; }
-
-        [DataMember]
-        public UserSummaryDto CreatedByClient { get; set; }
-
-        [DataMember]
-        public long UpdatedTimestampUtc { get; set; }
-
-        [DataMember]
-        public UserSummaryDto UpdatedByUser { get; set; }
-
-        [DataMember]
-        public FixStatuses Status { get; set; }
-
-        [DataMember]
-        public Guid ActivityHistoryId { get; set; }
-
-        [DataMember]
-        public Guid BillingActivityId { get; set; }
-
-        [DataMember]
-        public FixPlanSummaryDto PlanSummary { get; set; }
-
-        #region SeedFakeDtos
-        public new IList<FixDocument> SeedFakeDtos()
+      FixDocument firstFixDocument = new FixDocument
+      {
+        Details = new FixDetailsDto
         {
-            FixDocument firstFixDocument = new FixDocument
-            {
-                Details = new FixDetailsDto()
-                    {
-                        Name = "Restore Brick Wall",
-                        Description = "An area of the exposed brick wall in the dining space  is crumbling and cracked. Help is needed to restore the damaged area.",
-                        Category = "Masonry",
-                        Type = "Quick Fix"
-                    },
-                Tags = new List<TagDto>
-                {
-                    new TagDto
-                    {
-                        Id = new Guid("8b418766-4a99-42a8-b6d7-9fe52b88ea98"),
-                        Name = "Brick Wall"
-                    }
-                },
-                Location = new AddressDto()
-                {
-                },
-                Schedule = new List<FixScheduleRangeDto>()
-                {
-                    new FixScheduleRangeDto
-                    {
-                        StartTimestampUtc = 1617819166,
-                        EndTimestampUtc = 1617822561
-                    }
-                },
-                CreatedByClient = new UserSummaryDto()
-                {
-                    Id = new Guid("33c3aa05-ec00-418f-9072-7cdad5ec46e6"),
-                    FirstName = "Frances",
-                    LastName = "Alvarez"
-                },
-                UpdatedByUser = new UserSummaryDto()
-                {
-                    Id = new Guid("33c3aa05-ec00-418f-9072-7cdad5ec46e6"),
-                    FirstName = "Frances",
-                    LastName = "Alvarez"
-                }
+          Name = "Shower",
+          Description = "Need to change shower",
+          Category = "Bathroom",
+          Type = "New"
+        },
+        Tags = new List<TagDto>()
+        {
+          new TagDto
+          {
+            Id = new Guid("8b418766-4a99-42a8-b6d7-9fe52b88ea98"),
+            Name = "Bathroom"
+          },
+          new TagDto
+          {
+            Id = new Guid("8b418766-4a99-42a8-b6d7-9fe52b88ea99"),
+            Name = "Toilet"
+          }
+        },
+        Images = new List<FileDto>()
+        {
+          new FileDto
+          {
+            Name = "image-bathroom",
+            Url = "/image.png"
+          }
 
-            };
-            FixDocument secondFixDocument = null;
+        },
+        Location = new AddressDto()
+        {
+        },
+        Schedule = new List<FixScheduleRangeDto>()
+        {
+          new FixScheduleRangeDto
+          {
+            EndTimestampUtc = 1609102412,
+            StartTimestampUtc = 1609102532
+          }
 
-            return new List<FixDocument>
-            {
-                firstFixDocument,
-                secondFixDocument
-            };
+        },
+        CreatedByClient = new UserSummaryDto()
+        {
+          Id = new Guid("8b418766-4a99-42a8-b6d7-9fe52b88ea93"),
+          FirstName = "Mary",
+          LastName = "Lamb"
+        },
+        UpdatedByUser = new UserSummaryDto()
+        {
+          Id = new Guid("8b418766-4a99-42a8-b6d7-9fe52b88ea93"),
+          FirstName = "Mary",
+          LastName = "Lamb"
         }
-        #endregion
+      };
+
+      FixDocument secondFixDocument = null;
+
+      return new List<FixDocument>
+      {
+        firstFixDocument,
+        secondFixDocument
+      };
     }
+  }
 }
 
 

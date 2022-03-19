@@ -11,6 +11,7 @@ using Fixit.Core.DataContracts.Notifications.Payloads;
 using AutoMapper;
 using Fixit.Core.DataContracts.Notifications.Operations;
 using Fixit.Core.DataContracts.Notifications.Enums;
+using System.Linq;
 
 namespace Fixit.Notification.Management.Triggers.Functions.Matching
 {
@@ -49,18 +50,20 @@ namespace Fixit.Notification.Management.Triggers.Functions.Matching
       if (fixDocument.CreatedTimestampUtc.Equals(fixDocument.UpdatedTimestampUtc))
       {
         // Get qualified craftsmen list 
-        var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() { RecipientUsers = await _fixClassificationMediator.GetMinimalQualitifedCraftmen(fixDocument, cancellationToken) };
-
-        // specify action type 
-        var fixAssignmentValidationDto = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
-        enqueueNotificationRequestDto.Payload = new NotificationPayloadDto() { Action = NotificationTypes.FixClientRequest, SystemPayload = fixAssignmentValidationDto };
-
-        // enqueue notification
-        var operationStatus = await _notificationMediator.EnqueueNotificationAsync(enqueueNotificationRequestDto, cancellationToken);
-        if (!operationStatus.IsOperationSuccessful)
+        var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() { RecipientUsers = await _fixClassificationMediator.GetMinimalQualifiedCraftsmen(fixDocument, cancellationToken) };
+        if(enqueueNotificationRequestDto.RecipientUsers is { } && enqueueNotificationRequestDto.RecipientUsers.Any())
         {
-          var errorMessage = $"{nameof(OnFixCreateMatchAndNotifyFix)} failed to enqueue fix with id {fixDocument.id} with message {operationStatus.OperationException}";
-          _logger.LogError(errorMessage);
+          // specify action type 
+          var fixAssignmentValidationDto = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
+          enqueueNotificationRequestDto.Payload = new NotificationPayloadDto() { Action = NotificationTypes.FixClientRequest, SystemPayload = fixAssignmentValidationDto };
+
+          // enqueue notification
+          var operationStatus = await _notificationMediator.EnqueueNotificationAsync(enqueueNotificationRequestDto, cancellationToken);
+          if (!operationStatus.IsOperationSuccessful)
+          {
+            var errorMessage = $"{nameof(OnFixCreateMatchAndNotifyFix)} failed to enqueue fix with id {fixDocument.id} with message {operationStatus.OperationException}";
+            _logger.LogError(errorMessage);
+          }
         }
       }
 

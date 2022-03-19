@@ -14,6 +14,6 @@ namespace Fixit.Notification.Management.Lib.Mediators
     /// <param name="fixDocument">Fix request used to classify craftsmen</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Returns list of qualified craftsmen</returns>
-    Task<List<UserBaseDto>> GetMinimalQualitifedCraftmen(FixDocument fixDocument, CancellationToken cancellationToken);
+    Task<List<UserBaseDto>> GetMinimalQualifiedCraftsmen(FixDocument fixDocument, CancellationToken cancellationToken);
   }
 }
