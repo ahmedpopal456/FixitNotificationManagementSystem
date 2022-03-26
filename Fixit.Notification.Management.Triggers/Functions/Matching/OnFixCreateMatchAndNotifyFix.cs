@@ -50,12 +50,22 @@ namespace Fixit.Notification.Management.Triggers.Functions.Matching
       if (fixDocument.CreatedTimestampUtc.Equals(fixDocument.UpdatedTimestampUtc))
       {
         // Get qualified craftsmen list 
-        var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() { RecipientUsers = await _fixClassificationMediator.GetMinimalQualifiedCraftsmen(fixDocument, cancellationToken) };
+        var enqueueNotificationRequestDto = new EnqueueNotificationRequestDto() 
+        {
+          Title = "Knock Knock",
+          Message = "Incoming Request from Client",
+          RecipientUsers = await _fixClassificationMediator.GetMinimalQualifiedCraftsmen(fixDocument, cancellationToken)
+        };
+
         if(enqueueNotificationRequestDto.RecipientUsers is { } && enqueueNotificationRequestDto.RecipientUsers.Any())
         {
           // specify action type 
           var fixAssignmentValidationDto = _mapper.Map<FixDocument, FixAssignmentValidationDto>(fixDocument);
-          enqueueNotificationRequestDto.Payload = new NotificationPayloadDto() { Action = NotificationTypes.FixClientRequest, SystemPayload = fixAssignmentValidationDto };
+          enqueueNotificationRequestDto.Payload = new NotificationPayloadDto() 
+          {
+            Action = NotificationTypes.FixClientRequest,
+            SystemPayload = fixAssignmentValidationDto 
+          };
 
           // enqueue notification
           var operationStatus = await _notificationMediator.EnqueueNotificationAsync(enqueueNotificationRequestDto, cancellationToken);
