@@ -160,34 +160,6 @@ jobs:
     continueOnError: true
     inputs:
       pollingTimeoutSec: '300'
-
-  # Pack
-  - task: DotNetCoreCLI@2
-    displayName: "Pack"
-    inputs:
-      command: 'pack'
-      feedsToUse: 'select'
-      arguments: '--configuration $(buildConfiguration)'
-      packagesToPack: '$(publishLibrary);$(publishTriggers);$(publishServerlessApi)'
-      vstsFeed: 'fixit-notification-management'
-      versioningScheme: 'byEnvVar'
-      versionEnvVar: BUILD.BUILDNUMBER
-  
-  # Publish to Feed
-  # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
-  # publishVstsFeed is fixit-notification-management Feed
-  # byBuildNumber uses variable 'name'
-  - task: NuGetCommand@2
-    displayName: 'Nuget Push'
-    inputs:
-      command: 'push'
-      feedsToUse: 'select'
-      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/d2ce7186-5a41-40ea-80da-191bdc4a6fb6'
-      versioningScheme: 'byEnvVar'
-      versionEnvVar: BUILD.BUILDNUMBER
-      allowPackageConflicts: true
     
     # Publish PDBs
   - task: PublishSymbols@2
