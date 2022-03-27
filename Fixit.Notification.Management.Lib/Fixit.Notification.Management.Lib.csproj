@@ -6,9 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Fixit.Core.Database" Version="1.0.53-alpha" />
-    <PackageReference Include="Fixit.Core.Networking" Version="1.0.0-1816-13" />
-    <PackageReference Include="Fixit.Core.Storage" Version="1.0.39-alpha" />
+    <PackageReference Include="Fixit.Core.Database" Version="1.0.54-alpha" />
+    <PackageReference Include="Fixit.Core.Networking" Version="1.0.0-1816-14" />
+    <PackageReference Include="Fixit.Core.Storage" Version="1.0.40-alpha" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />

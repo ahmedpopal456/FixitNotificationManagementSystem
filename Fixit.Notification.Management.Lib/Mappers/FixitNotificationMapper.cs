@@ -98,18 +98,10 @@ namespace Fixit.Notification.Management.Lib.Mappers
        .ReverseMap();
 
       CreateMap<FixDocument, FixAssignmentValidationDto>()
+       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Id, opts => opts.MapFrom(fixDocument => fixDocument.id))
        .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.AssignedToCraftsman, opts => opts.MapFrom(fixDocument => fixDocument.AssignedToCraftsman))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.ClientEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.ClientEstimatedCost))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.SystemCalculatedCost, opts => opts.MapFrom(fixDocument => fixDocument.SystemCalculatedCost))
        .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CraftsmanEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.CraftsmanEstimatedCost))
        .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Schedule, opts => opts.MapFrom(fixDocument => fixDocument.Schedule))
-       .ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkCategory.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.Category))
-       .ForPath(fixAssignmentValidationDto => fixAssignmentValidationDto.WorkType.Name, opts => opts.MapFrom(fixDocument => fixDocument.Details.Type))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Location, opts => opts.MapFrom(fixDocument => fixDocument.Location))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Images, opts => opts.MapFrom(fixDocument => fixDocument.Images))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Details, opts => opts.MapFrom(fixDocument => fixDocument.Details))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CreatedByClient, opts => opts.MapFrom(fixDocument => fixDocument.CreatedByClient))
-       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Tags, opts => opts.MapFrom(fixDocument => fixDocument.Tags))
        .ReverseMap();
 
       #endregion
