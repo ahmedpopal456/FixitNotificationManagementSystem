@@ -42,12 +42,18 @@ namespace Fixit.Notification.Management.Triggers.Functions
     public async Task StoreOnNotificationDispatchForStorageAsync(EventGridEvent enqueuedNotificationMessage, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
+      bool isOperationSuccessful = true; 
 
       NotificationCreateRequestDto notificationCreateRequestDto = JsonConvert.DeserializeObject<NotificationCreateRequestDto>(enqueuedNotificationMessage.Data.ToString());
       _ = notificationCreateRequestDto ?? throw new InvalidOperationException($"{nameof(StoreOnNotificationDispatchForStorage)} was unable to properly deserialize {nameof(enqueuedNotificationMessage)}...");
 
-      var createNotificationResponse = await _notificationMediator.CreateNotificationAsync(notificationCreateRequestDto, cancellationToken);
-      if (createNotificationResponse.IsOperationSuccessful)
+      if (!notificationCreateRequestDto.IsTransient)
+      {
+        var createNotificationResponse = await _notificationMediator.CreateNotificationAsync(notificationCreateRequestDto, cancellationToken);
+        isOperationSuccessful = createNotificationResponse.IsOperationSuccessful;
+      }
+
+      if(isOperationSuccessful)
       {
         var enqueueNotificationRequestNotification = new EventGridEvent()
         {

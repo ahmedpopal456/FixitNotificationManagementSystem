@@ -26,6 +26,9 @@ namespace Fixit.Notification.Management.Lib.Models.Notifications.Operations.Requ
     [DataMember]
     public bool Silent { get; set; }
 
+    [DataMember]
+    public bool IsTransient { get; set; }
+
     #region IDtoValidator
 
     public bool Validate()

@@ -18,7 +18,8 @@ namespace Fixit.Notification.Management.Lib.Mappers.Converters
       {
         NotificationCreateRequestDto notificationDocument = context.Mapper.Map<EnqueueNotificationRequestDto, NotificationCreateRequestDto>(source);
         notificationDocument.RecipientUser = recipient;
-        notificationDocument.Id = Guid.NewGuid(); 
+        notificationDocument.Id = Guid.NewGuid();
+        notificationDocument.IsTransient = source.IsTransient;
 
         notificationDocuments.Add(notificationDocument);
       }
