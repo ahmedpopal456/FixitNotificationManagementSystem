@@ -54,7 +54,7 @@ namespace Fixit.Notification.Management.Triggers.Functions.Matching
         {
           Title = "Knock Knock",
           Message = "Incoming Request from Client",
-          RecipientUsers = await _fixClassificationMediator.GetMinimalQualifiedCraftsmen(fixDocument, cancellationToken)
+          RecipientUsers = await _fixClassificationMediator.GetMinimalQualifiedCraftsmen(fixDocument, cancellationToken),
         };
 
         if(enqueueNotificationRequestDto.RecipientUsers is { } && enqueueNotificationRequestDto.RecipientUsers.Any())

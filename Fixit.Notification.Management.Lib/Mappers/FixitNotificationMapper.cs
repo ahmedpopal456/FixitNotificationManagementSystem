@@ -102,6 +102,7 @@ namespace Fixit.Notification.Management.Lib.Mappers
        .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.AssignedToCraftsman, opts => opts.MapFrom(fixDocument => fixDocument.AssignedToCraftsman))
        .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CraftsmanEstimatedCost, opts => opts.MapFrom(fixDocument => fixDocument.CraftsmanEstimatedCost))
        .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.Schedule, opts => opts.MapFrom(fixDocument => fixDocument.Schedule))
+       .ForMember(fixAssignmentValidationDto => fixAssignmentValidationDto.CreatedByClient, opts => opts.MapFrom(fixDocument => fixDocument.CreatedByClient))
        .ReverseMap();
 
       #endregion
