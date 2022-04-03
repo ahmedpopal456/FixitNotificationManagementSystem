@@ -1,90 +1,165 @@
 trigger:
   branches:
     include:
-      - master
       - development
+      - staging
+      - master
 
 variables:
 
   # Solution Variables
   buildPlatform: 'x64'
-  buildProjects: '**/Notification*.csproj'
-  publishNotificationLibraries: '**\NotificationWebApi.csproj'
-
+  buildProjects: '**/Fixit.Notification.Management*.csproj'
+  publishLibrary: '**/Fixit.Notification.Management.Lib.csproj'
+  publishServerlessApi: '**/Fixit.Notification.Management.ServerlessApi.csproj'
+  publishTriggers: '**/Fixit.Notification.Management.Triggers.csproj'
   buildConfiguration: 'Release'
 
-  # Version Handling Variables
-  majorProductVersion: 1   
-  minorProductVersion: 0    
-  majorMinorProductVersion: $(majorProductVersion).$(minorProductVersion).0
-  patchProductVersion: $[counter(variables['majorMinorProductVersion'], 0)]
-  buildProductVersion: 0
-  buildFullVersion: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+   # Version Handling Variables
+  majorProductVersion: 1
+  minorProductVersion: 0
  
   # Artifact Drop Folder
   artifactName: 'drop'
 
-# Set Build Name
-name: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
-
 jobs:
+# master branch versioning
+- job: Build_Master_Version_Number
+  # Set Docker
+  pool:
+    vmImage: 'ubuntu-latest'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  variables:
+    masterMajorMinor: $(majorProductVersion).$(minorProductVersion)
+    masterPatchCount: $[counter(variables['masterMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(masterPatchCount)"
+      name: IfMasterSetBuildNameAndPatch
 
-- job: BuildingNotificationManagementSystem
-  
+# staging branch versioning
+- job: Build_Staging_Version_Number
+  # Set Docker
+  pool:
+    vmImage: 'ubuntu-latest'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/staging')
+  variables:
+    stagingMajorMinor: $(majorProductVersion).$(minorProductVersion)-beta
+    stagingPatchCount: $[counter(variables['stagingMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(stagingPatchCount)-beta"
+      name: IfStagingSetBuildNameAndPatch
+
+# development branch versioning
+- job: Build_Development_Version_Number
+  # Set Docker
+  pool:
+    vmImage: 'ubuntu-latest'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/development')
+  variables:
+    stagingMajorMinor: $(majorProductVersion).$(minorProductVersion)-alpha
+    stagingPatchCount: $[counter(variables['stagingMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(stagingPatchCount)-alpha"
+      name: IfDelevopmentSetBuildNameAndPatch
+
+# PR versioning for master branch, staging branch & development branch
+- job: Build_PullRequest_Version_Number
+  # Set Docker
+  pool:
+    vmImage: 'ubuntu-latest'
+  condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.SourceBranch'], 'refs/heads/staging'), ne(variables['Build.SourceBranch'], 'refs/heads/development'), eq(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    pullRequestMajorMinor: $(majorProductVersion).$(minorProductVersion)-pre-alpha$(variables['system.pullrequest.pullrequestid'])
+    pullRequestPatchCount: $[counter(variables['pullRequestMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-pre-alpha$(system.pullrequest.pullrequestid)-$(pullRequestPatchCount)"
+      name: IfPullRequestBuildNameAndPatch
+
+# Name branch prefix to build version (master branch & staging branch)
+- job: Build_Branch_Version_Number
+  # Set Docker
+  pool:
+    vmImage: 'ubuntu-latest'
+  condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.SourceBranch'], 'refs/heads/staging'), ne(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    branchMajorMinor: $(majorProductVersion).$(minorProductVersion)-br$(variables['build.sourcebranch'])
+    branchPatchCount: $[counter(variables['branchMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.BuildId)-$(branchPatchCount)"
+      name: IfBranchBuildNameAndPatch
+
+- job: Build_Notification_Management_System
+  dependsOn:
+    - Build_Branch_Version_Number
+    - Build_PullRequest_Version_Number
+    - Build_Development_Version_Number
+    - Build_Staging_Version_Number
+    - Build_Master_Version_Number
+  condition: or(succeeded('Build_Branch_Version_Number'), succeeded('Build_PullRequest_Version_Number'), succeeded('Build_Development_Version_Number'), succeeded('Build_Staging_Version_Number'), succeeded('Build_Master_Version_Number'))
+
   # Set Docker
   pool:
     vmImage: 'windows-2019'
     displayName: Run Main Build and Test Pipeline
 
   steps:
-
-    # Restore, Build and Package
+  # Installer
   - task: NuGetToolInstaller@0
     displayName: 'Use NuGet 4.4.1'
     inputs:
       versionSpec: 4.4.1
 
+  # Specify sdk Version
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
       version: '3.1.102'
-      
+  
+  # Restore
   - task: DotNetCoreCLI@2
     displayName: Restore
     inputs:
       command: restore
       projects: '$(buildProjects)'
       includeNuGetOrg: true
-      nobuild: true
+      feedsToUse: 'config'
+      nugetConfigPath: 'nuget.config'
 
+  # Prepare Sonar Cloud Analysis
+  - task: SonarCloudPrepare@1
+    continueOnError: true
+    inputs:
+      SonarCloud: 'fixit-sonarcloud'
+      organization: 'fixit'
+      scannerMode: 'MSBuild'
+      projectKey: 'fixit-app_FixitNotificationManagementSystem'
+      projectName: 'FixitNotificationManagementSystem'
+      extraProperties: |
+        sonar.exclusions=**/obj/**,**/*.dll
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+  
+  # Build
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
       projects: '$(buildProjects)'
       arguments: '--configuration $(buildConfiguration) --no-restore'
 
-  - task: DotNetCoreCLI@2
-    displayName: Test
-    inputs:
-      command: 'test'
-      projects: '**/NotificationWebApi*Tests.csproj'
-      testRunTitle: 'NotificationWebApi Unit Tests'
+  # Run Sonar Cloud Analysis
+  - task: SonarCloudAnalyze@1
+    continueOnError: true
 
-  - task: PublishTestResults@2
-    displayName: Publish Unit Tests
-    condition: succeededOrFailed()
+  # Publish Sonar Cloud Report 
+  - task: SonarCloudPublish@1
+    continueOnError: true
     inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'     
-        
-  - task: DotNetCoreCLI@2
-    displayName: Publish Notification Binaries
-    inputs:
-      command: publish
-      publishWebProjects: false
-      projects: '$(publishNotificationLibraries)'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore'
-      zipAfterPublish: false
+      pollingTimeoutSec: '300'
     
     # Publish PDBs
   - task: PublishSymbols@2
@@ -94,8 +169,29 @@ jobs:
       PublishSymbols: false
     continueOnError: true
 
+    # Publish projects
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish projects'
+    inputs:
+      command: 'publish'
+      projects: |
+        $(publishLibrary)
+        $(publishServerlessApi)
+        $(publishTriggers)
+      publishWebProjects: false
+      arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+      zipAfterPublish: true
+
+  # Publish Terraform configuration
+  - task: CopyFiles@2
+    displayName: 'Publish Terraform configuration'
+    inputs:
+      SourceFolder: '.devops/terraform'
+      Contents: '**'
+      TargetFolder: '$(build.artifactstagingdirectory)/terraform'
+
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact'
     inputs:
       PathtoPublish: '$(build.artifactstagingdirectory)'
-      ArtifactName: 'drop' 
+      ArtifactName: 'drop'

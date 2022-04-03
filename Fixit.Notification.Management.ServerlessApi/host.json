@@ -1,0 +1,28 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingExcludedTypes": "Request",
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    }
+  },
+  "openApi": {
+    "info": {
+      "version": "3.0.0",
+      "title": "Notification Management Service (FIXIT INC.)",
+      "description": "Fixit's Notification Management Service, using Open API specification - from **host.json**.",
+      "termsOfService": "https://fixittech.io",
+      "contact": {
+        "name": "Ahmed Popal",
+        "email": "ahmed.popal@hotmail.com",
+        "url": "https://fixittech.io"
+      },
+      "license": {
+        "name": "MIT",
+        "url": "http://opensource.org/licenses/MIT"
+      }
+    }
+  }
+}
